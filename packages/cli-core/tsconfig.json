@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "sourceMap": true,
+    "listFiles": false,
+    "module": "commonjs",
+    "noImplicitAny": true,
+    "preserveConstEnums": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "types": ["node", "jest"],
+    "target": "es2017",
+    "outDir": "dist",
+    "declaration": true
+  },
+  "include": ["src/**/*"]
+}
