@@ -1,1 +1,8 @@
-### Hummer Cli Core
+# Hummer CLI Core
+提供CLI 的基础能力，包括命令的分配，插件的加载，提供获取版本的基础能力以及查看命令帮助信息的能力。
+
+支持命令
+```
+hummer -v       // 查看当前 CLI 版本号以及安装位置
+hummer -h     // 查看 CLI 的帮助信息
+```

@@ -7,11 +7,10 @@
   "command": {
     "publish": {
       "allowBranch": [
-        "master",
+        "main",
         "release"
       ],
       "ignoreChanges": [
-        "*.md",
         "lerna.json"
       ],
       "registry": "https://registry.npmjs.org/"
