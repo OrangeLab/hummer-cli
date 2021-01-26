@@ -6,7 +6,7 @@ import * as async from 'async'
 import {getLoggerWithTag, chalk} from '@hummer/cli-utils'
 import {getTplOpts} from './uitls'
 import {ask} from './ask'
-const logger = getLoggerWithTag('sls-cli-plugin-init')
+const logger = getLoggerWithTag('hummer-cli-plugin-init')
 
 export const generate = function (name: string, src: string, dest: string, done: (err: Error) => void): void {
   const opts = getTplOpts(name, src)
