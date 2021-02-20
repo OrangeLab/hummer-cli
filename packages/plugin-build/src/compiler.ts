@@ -4,6 +4,7 @@ import {WsServer} from './common/ws-server'
 import {getPort, getHost} from './utils'
 import * as fs from 'fs'
 import {fse} from '@hummer/cli-utils'
+import path from 'path'
 export class Compiler{
   config: any
   initConfig(config:any){
@@ -28,7 +29,8 @@ export class Compiler{
 
   async dev(){
     // 启动Dev Server And Websocket Server
-    let rootDir = this.config?.output?.path;
+    // 默认 path.join(process.cwd(), 'dist')
+    let rootDir = this.config?.output?.path ?? path.join(process.cwd(), 'dist');
     fse.ensureDirSync(rootDir);
     let port = await getPort();
     let host = getHost();
