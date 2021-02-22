@@ -41,7 +41,6 @@
     "core-js-pure": "^3.8.0",
     "file-loader": "^6.2.0",
     "glob": "^7.1.6",
-    "http-server": "^0.12.3",
     "koa": "^2.13.0",
     "koa-html-render": "^1.0.3",
     "koa-static": "^5.0.0",
@@ -57,7 +56,6 @@
     "ws": "^7.3.1"
   },
   "devDependencies": {
-    "@types/http-server": "^0.10.1",
     "@types/koa": "^2.11.6",
     "@types/koa-static": "^4.0.1"
   },
