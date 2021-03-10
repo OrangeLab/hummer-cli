@@ -10,7 +10,8 @@ export default function getDefaultHummerConfiguration(isProduction: boolean): Co
       extensions: [".ts", ".js"]
     },
     externals: {
-      '@hummer/hummer-front': '__GLOBAL__'
+      '@hummer/hummer-front': '__GLOBAL__',
+      '@didi/hummer-front': '__GLOBAL__' // 兼容老版 CLI
     },
     module: {
       rules: [{

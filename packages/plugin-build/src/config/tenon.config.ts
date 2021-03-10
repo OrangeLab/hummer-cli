@@ -14,7 +14,8 @@ export default function getDefaultTenonConfiguration(isProduction: boolean): Con
       extensions: [".js",'.json',".jsx",".vue", ".css" ]
     },
     externals: {
-      '@hummer/hummer-front': '__GLOBAL__'
+      '@hummer/hummer-front': '__GLOBAL__',
+      '@didi/hummer-front': '__GLOBAL__' // 兼容老版 CLI
     },
     module: {
       rules: [{
