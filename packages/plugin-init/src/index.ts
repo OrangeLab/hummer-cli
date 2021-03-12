@@ -66,7 +66,7 @@ export class InitPlugin extends Plugin{
   }
 
   private async getRemoteTemplate(){
-    return ["template-vue", "template-ts", "template-android", "template-ios"]
+    return ["template-vue", "template-ts", "template-android", "template-ios", "template-library"]
   }
 
   private getLocalPath(){
