@@ -1,6 +1,6 @@
 {
   "name": "@hummer/cli",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -27,9 +27,9 @@
   "license": "ISC",
   "dependencies": {
     "@hummer/cli-core": "^0.1.9",
-    "@hummer/cli-plugin-build": "^0.1.10",
+    "@hummer/cli-plugin-build": "^0.1.11",
     "@hummer/cli-plugin-debug": "^0.1.9",
-    "@hummer/cli-plugin-init": "^0.1.10",
+    "@hummer/cli-plugin-init": "^0.1.11",
     "@hummer/cli-utils": "^0.1.9"
   },
   "gitHead": "2c2a8eee7beca6ffae43e8c0f8a32a8232851782"
