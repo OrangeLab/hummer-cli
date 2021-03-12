@@ -1,6 +1,6 @@
 import { Configuration } from 'webpack'
 import {VueLoaderPlugin} from '@hummer/tenon-loader'
-
+import * as path from 'path'
 export default function getDefaultTenonConfiguration(isProduction: boolean): Configuration {
   return {
     mode: isProduction?'production':'development',
@@ -54,7 +54,13 @@ export default function getDefaultTenonConfiguration(isProduction: boolean): Con
             ]
           }
         }
-      }]
+      }, {
+        test: /\.css$/,
+        use: {
+            loader: path.join(require.resolve('@hummer/tenon-loader'), '../tenonStyleLoader.js')
+        }
+    }
+    ]
     },
     plugins: [new VueLoaderPlugin()]
   }
