@@ -18,9 +18,6 @@ export class CoreCli {
     this.hooks = {
 
     }
-    console.log('ARGV ====>')
-    console.log(this.argv)
-    console.log(this.commandsArray);
   }
   /**
    * 初始化Cli
