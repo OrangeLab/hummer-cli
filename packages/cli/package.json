@@ -1,6 +1,6 @@
 {
   "name": "@hummer/cli",
-  "version": "0.1.12",
+  "version": "0.1.13",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -29,7 +29,7 @@
     "@hummer/cli-core": "^0.1.12",
     "@hummer/cli-plugin-build": "^0.1.12",
     "@hummer/cli-plugin-debug": "^0.1.12",
-    "@hummer/cli-plugin-init": "^0.1.12",
+    "@hummer/cli-plugin-init": "^0.1.13",
     "@hummer/cli-utils": "^0.1.12"
   },
   "gitHead": "2c2a8eee7beca6ffae43e8c0f8a32a8232851782"
