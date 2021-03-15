@@ -1,6 +1,6 @@
 {
   "name": "@hummer/cli-core",
-  "version": "0.1.12",
+  "version": "0.1.14",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

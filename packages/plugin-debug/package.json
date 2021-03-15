@@ -1,6 +1,6 @@
 {
   "name": "@hummer/cli-plugin-debug",
-  "version": "0.1.12",
+  "version": "0.1.14",
   "description": "Hummer Plugin Debug",
   "homepage": "",
   "license": "ISC",
@@ -28,7 +28,7 @@
     "prepublishOnly": "rm -rf dist && npm run build"
   },
   "dependencies": {
-    "@hummer/cli-core": "^0.1.12",
+    "@hummer/cli-core": "^0.1.14",
     "@hummer/cli-utils": "^0.1.12",
     "metro-inspector-proxy": "^0.64.0"
   },
