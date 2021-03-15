@@ -1,6 +1,6 @@
 {
   "name": "@hummer/cli-plugin-init",
-  "version": "0.1.11",
+  "version": "0.1.12",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -22,8 +22,8 @@
   "author": "段丽康",
   "license": "ISC",
   "dependencies": {
-    "@hummer/cli-core": "^0.1.9",
-    "@hummer/cli-utils": "^0.1.9",
+    "@hummer/cli-core": "^0.1.12",
+    "@hummer/cli-utils": "^0.1.12",
     "@types/rimraf": "^3.0.0",
     "async": "^3.2.0",
     "cli-core": "^1.0.2",
