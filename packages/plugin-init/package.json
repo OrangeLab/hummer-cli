@@ -6,7 +6,8 @@
   "types": "dist/index.d.ts",
   "typings": "dist/index.d.ts",
   "files": [
-    "dist/"
+    "dist/",
+    "config.json"
   ],
   "publishConfig": {
     "access": "public"
