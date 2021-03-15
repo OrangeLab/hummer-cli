@@ -15,6 +15,7 @@ export class Core {
   private argv: any
   constructor(argv:any){
     this.argv = argv;
+    this.options = argv;
   }
 
   invoke(commandsArray?: string[]){
@@ -24,7 +25,7 @@ export class Core {
     }
     let command = this.getCommand(commandsArray)
     command.hooks && command.hooks.forEach(hook => {
-      hook()
+      hook(this.argv)
     })
   }
 

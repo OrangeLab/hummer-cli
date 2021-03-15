@@ -5,8 +5,9 @@ import * as tar from 'tar';
 import * as libPath from 'path'
 import {sync as rm} from 'rimraf'
 import {generate} from './generate'
+const config = require('../config.json')
 const {root} = cliConfig
-const logger = getLoggerWithTag('hummer-plugin-logger')
+const logger = getLoggerWithTag('hummer-init')
 
 export class InitPlugin extends Plugin{
   name = 'init'
@@ -66,7 +67,7 @@ export class InitPlugin extends Plugin{
   }
 
   private async getRemoteTemplate(){
-    return ["template-vue", "template-ts", "template-android", "template-ios", "template-library"]
+    return config.template
   }
 
   private getLocalPath(){
