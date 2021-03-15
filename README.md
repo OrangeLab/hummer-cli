@@ -21,10 +21,10 @@ hummer debug     // 开启调试服务
 ### 安装 Hummer CLI
 ```
 // 安装
-npm install @didi/hummer-cli -g
+npm install @hummer/cli -g
 
 // 更新（如果需要）
-npm update @didi/hummer-cli -g
+npm update @hummer/cli -g
 ```
 
 ### 创建项目
