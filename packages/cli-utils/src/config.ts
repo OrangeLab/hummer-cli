@@ -21,6 +21,7 @@ export async function getProjectConfig(webpack:any, env: any): Promise<ProjectCo
   try {
     config = await require(path.join(projectPath, 'hm.config.js'))
   } catch (exception) {
+    console.error(exception)
     return
   }
   if(typeof config === "function"){

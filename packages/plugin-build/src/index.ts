@@ -62,7 +62,7 @@ export class BuildPlugin extends Plugin {
     let isProduction = this.options.production || this.options.NODE_ENV === 'production';
     let projectConfig = await getProjectConfig(Webpack, this.options);
     if (!projectConfig) {
-      error('hm.config.js 文件不存在')
+      error('hm.config.js 文件不规范，请检查！')
       process.exit();
     }
     let { type, webpack } = projectConfig
