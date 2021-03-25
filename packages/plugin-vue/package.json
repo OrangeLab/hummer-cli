@@ -1,0 +1,35 @@
+{
+  "name": "@hummer/cli-plugin-vue",
+  "version": "0.1.15",
+  "description": "Hummer Plugin For Vue",
+  "homepage": "",
+  "license": "ISC",
+  "main": "dist/index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@git.xiaojukeji.com:tenon/tenon-cli.git"
+  },
+  "scripts": {
+    "test": "npx ../../node_modules/.bin/jest --coverage",
+    "test:watch": "npx ../../node_modules/.bin/jest --watch --collectCoverage=false",
+    "test:debug": "DEBUG=hummer* npx ../../node_modules/.bin/jest --coverage",
+    "build": "npx ../../node_modules/.bin/tsc",
+    "build:watch": "npx ../../node_modules/.bin/tsc -w",
+    "prepublishOnly": "rm -rf dist && npm run build"
+  },
+  "dependencies": {
+    "@hummer/cli-core": "^0.1.15",
+    "@hummer/cli-utils": "^0.1.15"
+  },
+  "gitHead": "2c2a8eee7beca6ffae43e8c0f8a32a8232851782"
+}
