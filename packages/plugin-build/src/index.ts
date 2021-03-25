@@ -66,7 +66,7 @@ export class BuildPlugin extends Plugin {
       process.exit();
     }
     let { type, webpack } = projectConfig
-    let defaultConfig = getDefaultConfig(isProduction, type)
+    let defaultConfig = getDefaultConfig(isProduction, type, projectConfig)
     if (webpack) {
       if (webpack.entries) {
         let entry = getEntries(webpack.entries, type)

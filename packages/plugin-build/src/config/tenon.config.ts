@@ -1,7 +1,18 @@
 import { Configuration } from 'webpack'
 import {VueLoaderPlugin} from '@hummer/tenon-loader'
+import JsccPlugin from 'webpack-plugin-jscc'
+import {ProjectConfig} from '@hummer/cli-utils'
 
-export default function getDefaultTenonConfiguration(isProduction: boolean): Configuration {
+export default function getDefaultTenonConfiguration(isProduction: boolean, hmConfig?:ProjectConfig): Configuration {
+  let plugins = [new VueLoaderPlugin()]
+  if(hmConfig){
+    // TODO 自定义插件的配置，在这里进行拓展
+    // TODO Validate Jscc Config
+    if(hmConfig.jscc){
+      plugins.push(new JsccPlugin(hmConfig.jscc))
+    }
+  }
+
   return {
     mode: isProduction?'production':'development',
     devtool: isProduction ? 'hidden-source-map' : 'cheap-module-source-map',
@@ -56,6 +67,6 @@ export default function getDefaultTenonConfiguration(isProduction: boolean): Con
         }
       }]
     },
-    plugins: [new VueLoaderPlugin()]
+    plugins: plugins
   }
 }
