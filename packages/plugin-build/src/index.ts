@@ -2,6 +2,7 @@ import { Core, Plugin } from '@hummer/cli-core'
 import { getProjectConfig, getLoggerWithTag, ora } from '@hummer/cli-utils'
 import { getDefaultConfig } from './utils'
 import { mergeConfig, getEntries } from './utils/webpack'
+import { archive } from './utils/archive';
 import { Compiler } from './compiler'
 import { error } from '@hummer/cli-utils'
 import Webpack from 'webpack'
@@ -28,27 +29,28 @@ export class BuildPlugin extends Plugin {
 
   private async build() {
     // Build 环境变量默认使用 production
-    if(!this.options.NODE_ENV){
+    if (!this.options.NODE_ENV) {
       this.options.NODE_ENV = "production"
     }
     let config = await this.getWebpackConfig();
     let compiler = new Compiler();
     compiler.initConfig(config);
     const spinner = ora('Building, please wait for a moment!\n')
-    try{
+    try {
       logger.info('✨ Start Build, please wait for a moment!')
       spinner.start()
       await compiler.build();
-      spinner.stop()
+      archive(config.output.path);
       logger.info('✨ Build Success!')
-    }catch(err){
+      spinner.stop()
+    } catch (err) {
       spinner.stop(err)
     }
   }
 
   private async dev() {
     // Dev 环境变量默认使用 development
-    if(!this.options.NODE_ENV){
+    if (!this.options.NODE_ENV) {
       this.options.NODE_ENV = "development"
     }
     let config = await this.getWebpackConfig();

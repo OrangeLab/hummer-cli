@@ -1,23 +1,25 @@
 import webpack from 'webpack'
-import {Stats} from 'webpack'
-import {WsServer} from './common/ws-server'
-import {getPort, getHost} from './utils'
+import { Stats } from 'webpack'
+import { WsServer } from './common/ws-server'
+import { getPort, getHost } from './utils'
 import * as fs from 'fs'
-import {fse} from '@hummer/cli-utils'
+import { fse } from '@hummer/cli-utils'
 import path from 'path'
-export class Compiler{
+export class Compiler {
   config: any
-  initConfig(config:any){
+  initConfig(config: any) {
     this.config = config
   }
-  
-  build(){
+
+  build() {
+    const rootDir = this.config?.output?.path ?? path.join(process.cwd(), 'dist');
+    fse.removeSync(rootDir);
     return new Promise<void>((resolve, reject) => {
       // TODO build增加压缩
       webpack({
         ...this.config,
         mode: 'production'
-      }, (err:any, stats:any) => {
+      }, (err: any, stats: any) => {
         if (err) {
           reject(err);
         }
@@ -27,7 +29,7 @@ export class Compiler{
     })
   }
 
-  async dev(){
+  async dev() {
     // 启动Dev Server And Websocket Server
     // 默认 path.join(process.cwd(), 'dist')
     let rootDir = this.config?.output?.path ?? path.join(process.cwd(), 'dist');
@@ -36,14 +38,14 @@ export class Compiler{
     let host = getHost();
     var ws = new WsServer(host, port, rootDir);
     ws.start();
-    this.startWatchServer({host, port, rootDir}, ws);
+    this.startWatchServer({ host, port, rootDir }, ws);
 
-    this.buildWatch((stats:Stats) => {
+    this.buildWatch((stats: Stats) => {
       this.printStats(stats);
     })
   }
 
-  buildWatch(callback:Function){
+  buildWatch(callback: Function) {
     return new Promise<void>((resolve, reject) => {
       let compiler = webpack({
         ...this.config,
@@ -60,7 +62,7 @@ export class Compiler{
     })
   }
 
-  printStats(stats?:Stats){
+  printStats(stats?: Stats) {
     process.stdout.write(
       stats?.toString({
         colors: true,
@@ -82,9 +84,9 @@ export class Compiler{
     // console.log(output)
   }
 
-  startWatchServer({host, port, rootDir}:any, ws:any){
-    fs.watch(rootDir, {recursive: true}, (_event, fileName) => {
-      if(!/\.js$/.test(fileName)){
+  startWatchServer({ host, port, rootDir }: any, ws: any) {
+    fs.watch(rootDir, { recursive: true }, (_event, fileName) => {
+      if (!/\.js$/.test(fileName)) {
         return
       }
       let message = {
