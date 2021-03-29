@@ -40,7 +40,9 @@ export class BuildPlugin extends Plugin {
       logger.info('✨ Start Build, please wait for a moment!')
       spinner.start()
       await compiler.build();
-      archive(config.output.path);
+      if (this.options.archive) {
+        await archive(config.output.path);
+      }
       logger.info('✨ Build Success!')
       spinner.stop()
     } catch (err) {

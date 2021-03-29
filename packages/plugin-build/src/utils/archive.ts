@@ -34,6 +34,6 @@ export async function archive(path: string) {
       })
     });
   } catch (error) {
-    logger.error(`read file error----${JSON.stringify(error)}`);
+    logger.error(`archive failed----${JSON.stringify(error)}`);
   }
 }
