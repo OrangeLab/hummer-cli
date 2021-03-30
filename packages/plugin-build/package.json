@@ -1,6 +1,6 @@
 {
   "name": "@hummer/cli-plugin-build",
-  "version": "0.1.15",
+  "version": "0.1.16",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -30,8 +30,8 @@
     "@babel/preset-env": "^7.11.0",
     "@babel/preset-typescript": "^7.12.1",
     "@babel/runtime": "^7.12.5",
-    "@hummer/cli-core": "^0.1.15",
-    "@hummer/cli-utils": "^0.1.15",
+    "@hummer/cli-core": "^0.1.16",
+    "@hummer/cli-utils": "^0.1.16",
     "@hummer/tenon-loader": "^1.0.0",
     "@types/ws": "^7.2.9",
     "address": "^1.1.2",
@@ -58,9 +58,9 @@
     "ws": "^7.3.1"
   },
   "devDependencies": {
+    "@types/archiver": "^5.1.0",
     "@types/koa": "^2.11.6",
-    "@types/koa-static": "^4.0.1",
-    "@types/archiver": "^5.1.0"
+    "@types/koa-static": "^4.0.1"
   },
   "gitHead": "2c2a8eee7beca6ffae43e8c0f8a32a8232851782"
 }
