@@ -148,4 +148,5 @@ dist
 .vscode
 dist
 
-packages/*/package-lock.json
+packages/*/dist/*
+package-lock.json
