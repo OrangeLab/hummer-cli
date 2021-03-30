@@ -43,8 +43,8 @@ export class BuildPlugin extends Plugin {
       logger.info('✨ Start Build, please wait for a moment!')
       spinner.start()
       await compiler.build();
-      if (this.options.archive) {
-        await archive(config.output.path);
+      if (this.options.archive && config.output?.path) {
+        await archive(config.output?.path);
       }
       logger.info('✨ Build Success!')
       spinner.stop()
@@ -64,7 +64,7 @@ export class BuildPlugin extends Plugin {
     compiler.dev();
   }
 
-  private async getWebpackConfig() {
+  private async getWebpackConfig(){
     // 1. Read Project Config
     let isProduction = this.options.production || this.options.NODE_ENV === 'production';
     let projectConfig = await getProjectConfig(Webpack, this.options);
@@ -81,7 +81,6 @@ export class BuildPlugin extends Plugin {
         delete webpack.entries
       }
       let config = mergeConfig(defaultConfig, webpack)
-
       return config
     } else {
       return defaultConfig
