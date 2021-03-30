@@ -17,6 +17,9 @@ export class BuildPlugin extends Plugin {
       build: {
         description: 'build project',
         usage: 'hummer build --[option]=[value]',
+        options: {
+          archive: "build project and zip the output"
+        },
         hooks: [this.build.bind(this)]
       },
       dev: {
