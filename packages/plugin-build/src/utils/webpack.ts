@@ -1,4 +1,4 @@
-import {merge} from 'webpack-merge'
+import {mergeWithCustomize,customizeArray, CustomizeRule} from 'webpack-merge'
 import * as glob from 'glob'
 import * as path from 'path'
 import {ProjectType} from '@hummer/cli-utils'
@@ -6,8 +6,13 @@ import {getEntryConfig} from './index'
 
 const defaultFileReg = /\/([\w-]+)\.[j|t]s/
 
-export function mergeConfig(source:any, target:any){
-  return merge(source, target)
+export function mergeConfig(source:any, target:any):any{
+  let config = mergeWithCustomize({
+    customizeArray: customizeArray({
+      'resolve.extensions': CustomizeRule.Prepend // extensions use prepend strategy
+    }),
+  })(source, target)
+  return config
 }
 
 export function getEntries(entrySource:string, type?:ProjectType){
