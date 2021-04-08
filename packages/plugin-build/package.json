@@ -1,6 +1,6 @@
 {
   "name": "@hummer/cli-plugin-build",
-  "version": "0.1.18",
+  "version": "0.1.19",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
