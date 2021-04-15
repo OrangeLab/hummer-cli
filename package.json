@@ -6,6 +6,7 @@
   "scripts": {
     "cz": "git add -A && npx git-cz",
     "test": "lerna run test",
+    "publish": "npm run clean:lock",
     "build": "lerna run build",
     "build:watch": "lerna run --parallel build:watch",
     "bootstrap": "npm install && npx lerna bootstrap",

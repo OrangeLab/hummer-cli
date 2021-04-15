@@ -65,6 +65,7 @@ export class Compiler {
   printStats(stats?: Stats) {
     process.stdout.write(
       stats?.toString({
+        errorDetails: true,
         colors: true,
         modules: false,
         children: false,
