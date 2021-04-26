@@ -1,6 +1,6 @@
 {
   "name": "@hummer/cli",
-  "version": "0.1.22",
+  "version": "0.1.23",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -28,8 +28,8 @@
   "dependencies": {
     "@hummer/cli-core": "^0.1.16",
     "@hummer/cli-plugin-build": "^0.1.21",
-    "@hummer/cli-plugin-debug": "^0.1.16",
-    "@hummer/cli-plugin-device": "^0.1.22",
+    "@hummer/cli-plugin-debug": "^0.1.23",
+    "@hummer/cli-plugin-device": "^0.1.23",
     "@hummer/cli-plugin-init": "^0.1.16",
     "@hummer/cli-utils": "^0.1.16"
   },
