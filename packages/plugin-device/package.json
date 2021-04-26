@@ -1,19 +1,23 @@
 {
-  "name": "@hummer/cli",
-  "version": "0.1.21",
-  "description": "",
+  "name": "@hummer/cli-plugin-device",
+  "version": "0.1.16",
+  "description": "Hummer Plugin Device",
+  "homepage": "",
+  "license": "ISC",
   "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "typings": "dist/index.d.ts",
-  "files": [
-    "dist/",
-    "bin/"
-  ],
-  "bin": {
-    "hummer": "bin/hummer.js"
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
   },
+  "files": [
+    "lib"
+  ],
   "publishConfig": {
     "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@git.xiaojukeji.com:tenon/tenon-cli.git"
   },
   "scripts": {
     "test": "npx ../../node_modules/.bin/jest --coverage",
@@ -23,15 +27,10 @@
     "build:watch": "npx ../../node_modules/.bin/tsc -w",
     "prepublishOnly": "rm -rf dist && npm run build"
   },
-  "author": "段丽康",
-  "license": "ISC",
   "dependencies": {
     "@hummer/cli-core": "^0.1.16",
-    "@hummer/cli-plugin-build": "^0.1.21",
-    "@hummer/cli-plugin-debug": "^0.1.16",
-    "@hummer/cli-plugin-device": "^0.1.16",
-    "@hummer/cli-plugin-init": "^0.1.16",
-    "@hummer/cli-utils": "^0.1.16"
+    "@hummer/cli-utils": "^0.1.16",
+    "metro-inspector-proxy": "^0.64.0"
   },
   "gitHead": "2c2a8eee7beca6ffae43e8c0f8a32a8232851782"
 }
