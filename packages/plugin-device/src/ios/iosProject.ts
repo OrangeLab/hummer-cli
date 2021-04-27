@@ -154,12 +154,6 @@ export class IosProject extends NativeProject {
           `(using "xcodebuild ${xcodebuildArgs.join(' ')}")`,
         )}`,
       );
-      let xcpretty =
-        this.xcprettyAvailable() &&
-        child_process.spawn('xcpretty', [], {
-          stdio: ['pipe', process.stdout, process.stderr],
-        });
-
       const buildProcess = child_process.spawn(
         'xcodebuild',
         xcodebuildArgs
@@ -178,11 +172,7 @@ export class IosProject extends NativeProject {
         errorOutput += data;
       });
       buildProcess.on('close', (code: number) => {
-        if (xcpretty) {
-          xcpretty.stdin.end();
-        } else {
-          loader.stop();
-        }
+        loader.stop();
         if (code !== 0) {
           reject(
             new CLIError(
