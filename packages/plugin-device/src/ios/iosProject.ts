@@ -93,6 +93,13 @@ export class IosProject extends NativeProject {
       error('Failed to launch the app on simulator', result.stderr);
     }
   }
+
+  valid(){
+    let xcodeProject = findXcodeProject([this.launchData.projectPath])
+    if (xcodeProject == null){
+      throw Error('Can not find xcode project at'+this.launchData.projectPath);
+    }
+  }
   /**
    * phase 1: find xcode project
    * phase 2: find simulators

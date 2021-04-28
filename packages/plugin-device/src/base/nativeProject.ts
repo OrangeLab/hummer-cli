@@ -26,4 +26,7 @@ export class  NativeProject {
     public async run() {
 
     }
+    public valid(){
+    
+    }
 }
