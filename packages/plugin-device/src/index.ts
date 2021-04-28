@@ -1,10 +1,9 @@
 import { Core, Plugin } from '@hummer/cli-core';
 const {runInspectorProxy} = require('metro-inspector-proxy');
-import {info, error} from '@hummer/cli-utils';
+import { error } from '@hummer/cli-utils';
 import { NativeProject } from './base/nativeProject';
 import { IosProject } from './ios/iosProject';
 import { AndroidProject } from './android/androidProject';
-
 export class DevicePlugin extends Plugin {
 	name = 'run'
 	private port = 8081
@@ -13,12 +12,20 @@ export class DevicePlugin extends Plugin {
 		this.commands = {
 			run : {
 				description: 'launch iOS/android project',
-				usage: 'hummer run [iOS/android] [path]',
+				usage: 'hummer run [ios/android] [path]',
 				options: {
  					// '--port': "debug server port",
 				},
 				hooks: [this.run.bind(this)]
-			}			
+			},	
+			valid :{
+				description: 'valid iOS/android project',
+				usage: 'hummer valid [ios/android] [path]',
+				options: {
+ 					// '--port': "debug server port",
+				},
+				hooks: [this.valid.bind(this)]
+			}		
 		}
 	}
 
@@ -27,8 +34,19 @@ export class DevicePlugin extends Plugin {
 		try {
 			let project:NativeProject = this.resolveProject();
 			await project.run();
-		} catch (error) {
-			error(error)
+		} catch (err) {
+			error(err)
+			process.exit(-1);
+		}
+	}
+
+	private valid(){
+		try {
+			let project:NativeProject = this.resolveProject();
+			project.valid();
+		} catch (err) {			
+			error(err) 
+			process.exit(-1);
 		}
 	}
 
