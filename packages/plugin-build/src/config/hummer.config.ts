@@ -1,5 +1,17 @@
-import { Configuration } from 'webpack'
+import { Configuration, SourceMapDevToolPlugin } from 'webpack'
+import {getAssetsAddress} from '../utils/server'
+
 export default function getDefaultHummerConfiguration(isProduction: boolean): Configuration {
+  let plugins = []
+  if(!isProduction){
+    //issue:27 Modify SourceMapUrl 
+    plugins.push(new SourceMapDevToolPlugin({
+      module: true,
+      columns: false,
+      filename: "[name].js.map",
+      append: '\n//# sourceMappingURL='+ getAssetsAddress() + '[url];'
+    }))
+  }
   return {
     mode: isProduction ? 'production' : 'development',
     devtool: isProduction ? 'hidden-source-map' : 'cheap-module-source-map',
@@ -85,6 +97,7 @@ export default function getDefaultHummerConfiguration(isProduction: boolean): Co
           }
         ],
       }]
-    }
+    },
+    plugins: [...plugins]
   }
 }
