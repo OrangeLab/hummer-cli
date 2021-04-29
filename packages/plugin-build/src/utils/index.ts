@@ -1,10 +1,9 @@
 import { ProjectType, ProjectConfig } from '@hummer/cli-utils';
-import * as portfinder from 'portfinder';
-import * as address from 'address';
-
 import getDefaultHummerConfiguration from '../config/hummer.config';
 import getDefaultLibraryConfiguration from '../config/library.config';
 import getDefaultTenonConfiguration from '../config/tenon.config';
+
+export * from './server'
 /**
  * 获取项目的基本默认配置
  * @param type 项目类型
@@ -48,10 +47,3 @@ export function getEntryConfig(type?: ProjectType) {
   return reg
 }
 
-export function getPort() {
-  return portfinder.getPortPromise();
-}
-
-export function getHost() {
-  return address.ip();
-}

@@ -1,7 +1,7 @@
 import webpack from 'webpack'
 import { Stats } from 'webpack'
 import { WsServer } from './common/ws-server'
-import { getPort, getHost } from './utils'
+import { getServerConfig } from './utils'
 import * as fs from 'fs'
 import { fse } from '@hummer/cli-utils'
 import path from 'path'
@@ -34,8 +34,7 @@ export class Compiler {
     // 默认 path.join(process.cwd(), 'dist')
     let rootDir = this.config?.output?.path ?? path.join(process.cwd(), 'dist');
     fse.ensureDirSync(rootDir);
-    let port = await getPort();
-    let host = getHost();
+    let {port, host} = await getServerConfig();
     var ws = new WsServer(host, port, rootDir);
     ws.start();
     this.startWatchServer({ host, port, rootDir }, ws);

@@ -1,9 +1,9 @@
-import { Configuration } from 'webpack'
+import { Configuration,SourceMapDevToolPlugin } from 'webpack'
 import {TenonStylePlugin} from '@hummer/tenon-style-loader'
 import {VueLoaderPlugin} from '@hummer/tenon-loader'
 import JsccPlugin from 'webpack-plugin-jscc'
 import {ProjectConfig} from '@hummer/cli-utils'
-
+import {getAssetsAddress} from '../utils/server'
 import * as path from 'path'
 
 export default function getDefaultTenonConfiguration(isProduction: boolean, hmConfig?:ProjectConfig): Configuration {
@@ -15,7 +15,15 @@ export default function getDefaultTenonConfiguration(isProduction: boolean, hmCo
       plugins.push(new JsccPlugin(hmConfig.jscc))
     }
   }
-
+  if(!isProduction){
+    //issue:27 Modify SourceMapUrl 
+    plugins.push(new SourceMapDevToolPlugin({
+      module: true,
+      columns: false,
+      filename: "[name].js.map",
+      append: '\n//# sourceMappingURL='+ getAssetsAddress() + '[url];'
+    }))
+  }
   return {
     mode: isProduction?'production':'development',
     devtool: isProduction ? 'hidden-source-map' : 'cheap-module-source-map',
