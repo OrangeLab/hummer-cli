@@ -21,7 +21,7 @@ export default function getDefaultTenonConfiguration(isProduction: boolean, hmCo
       module: true,
       columns: false,
       filename: "[name].js.map",
-      append: '\n//# sourceMappingURL='+ getAssetsAddress() + '[url];'
+      append: '\n//# sourceMappingURL='+ getAssetsAddress() + '[url]'
     }))
   }
   return {

@@ -1,7 +1,7 @@
 import webpack from 'webpack'
 import { Stats } from 'webpack'
 import { WsServer } from './common/ws-server'
-import { getServerConfig } from './utils'
+import { getServerConfig,  getHost} from './utils'
 import * as fs from 'fs'
 import { fse } from '@hummer/cli-utils'
 import path from 'path'
@@ -84,15 +84,16 @@ export class Compiler {
     // console.log(output)
   }
 
-  startWatchServer({ host, port, rootDir }: any, ws: any) {
+  startWatchServer({ port, rootDir }: any, ws: any) {
     fs.watch(rootDir, { recursive: true }, (_event, fileName) => {
       if (!/\.js$/.test(fileName)) {
         return
       }
+      // #issue 24 Web Socket Send Message Use New IP
       let message = {
         type: 'ReloadBundle',
         params: {
-          url: `http://${host}:${port}/${fileName}`
+          url: `http://${getHost()}:${port}/${fileName}`
         }
       }
       ws.send(JSON.stringify(message))

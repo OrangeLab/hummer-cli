@@ -9,7 +9,7 @@ export default function getDefaultHummerConfiguration(isProduction: boolean): Co
       module: true,
       columns: false,
       filename: "[name].js.map",
-      append: '\n//# sourceMappingURL='+ getAssetsAddress() + '[url];'
+      append: '\n//# sourceMappingURL='+ getAssetsAddress() + '[url]'
     }))
   }
   return {
