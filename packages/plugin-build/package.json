@@ -34,7 +34,6 @@
     "@hummer/cli-utils": "^0.1.16",
     "@hummer/tenon-loader": "^1.0.5",
     "@hummer/tenon-style-loader": "0.0.3",
-    "@types/ws": "^7.2.9",
     "address": "^1.1.2",
     "archiver": "^5.3.0",
     "babel-loader": "^8.1.0",
@@ -59,6 +58,7 @@
     "ws": "^7.3.1"
   },
   "devDependencies": {
+    "@types/ws": "^7.2.9",
     "@types/archiver": "^5.1.0",
     "@types/koa": "^2.11.6",
     "@types/koa-static": "^4.0.1"
