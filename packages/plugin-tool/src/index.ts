@@ -1,5 +1,6 @@
 import { Core, Plugin } from '@hummer/cli-core';
 import {getServer} from '@hummer/cli-utils';
+import {LogPlugin} from './plugins/log';
 
 export class ToolPlugin extends Plugin {
 	name = 'tool'
@@ -17,7 +18,8 @@ export class ToolPlugin extends Plugin {
 	}
 
 	private run(){
-		let server = getServer()
+		let server = getServer(8081)
+		server.apply(new LogPlugin())
 		server.start()
 	}
 }

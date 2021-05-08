@@ -1,17 +1,17 @@
-import {HttpServer} from './http-server'
+import {HttpServer, Middleware} from './http-server'
 import {WsServer} from './ws-server'
-import {getLoggerWithTag} from '../logger'
-const logger = getLoggerWithTag('Server')
-let server:Server
-
+import {Plugin} from './plugin'
+import {Hooks, injectHookPlugin, invokeHook} from './hook'
+import {isArray} from '../utils'
+import {LogPlugin} from './log-plugin'
+export const defaultPort = 80
 export class Server{
-  koaMiddlewares:Array<Function> =  []
+  koaMiddlewares:Array<Middleware> =  []
+  plugins:Array<Plugin> =  []
   httpServer: HttpServer
   wsServer: WsServer
-  staticPath:string = ''
-  constructor(staticDir: string = ''){
-    this.staticPath = staticDir
-    this.httpServer = new HttpServer(8080)
+  constructor(port:number){
+    this.httpServer = new HttpServer(port)
     this.wsServer = new WsServer(this.httpServer)
     this.initEvent();
   }
@@ -19,54 +19,34 @@ export class Server{
   private initEvent(){
     // Http Server Start
     this.httpServer.on('start', () => {
-      this.onHttpServerStart()
+      invokeHook(Hooks.HttpServerStart)
     })
 
     // Http Server Close
     this.httpServer.on('close', () => {
-      this.onHttpServerClose()
+      invokeHook(Hooks.HttpServerClose)
     })
 
     // Websocket Server Start
     this.wsServer.on('start',() => {
-      this.onWsServerStart()
+      invokeHook(Hooks.WsServerStart)
     })
     // Websocket Server Connect
     this.wsServer.on('connection',() => {
-      this.onWsServerConnect()
+      invokeHook(Hooks.WsServerConnect)
     })
     // Websocket Server Close
     this.wsServer.on('close',() => {
-      this.onWsServerClose()
+      invokeHook(Hooks.WsServerClose)
     })
     // Websocket Server Message
     this.wsServer.on('message',(msg:any) => {
-      this.onWsServerMessage(msg)
+      invokeHook(Hooks.WsServerMessage, msg)
     })
   }
 
-  private onHttpServerStart(){
-    logger.info('Http Server Start!')
-  }
-
-  private onHttpServerClose(){
-    logger.info('Http Server Close!')
-  }
-
-  private onWsServerStart(){
-    logger.info('Ws Server Start!')
-  }
-  private onWsServerConnect(){
-    logger.info('Ws Server Connect!')
-  }
-  private onWsServerClose(){
-    logger.info('Ws Server Close!')
-  }
-  private onWsServerMessage(msg:string){
-    logger.info('Ws Server Get Message!' + msg)
-  }
-
   start(){
+    this.httpServer.applyMiddleWares(this.koaMiddlewares)
     this.httpServer.start()
     this.wsServer.start()
   }
@@ -77,14 +57,22 @@ export class Server{
   }
 
   restart(){
-
+    this.stop()
   }
 
-  apply(){
-    
+  apply(plugin: Plugin|Array<Plugin>){
+    if(isArray(plugin)){
+      (plugin as Array<Plugin>).forEach((p:Plugin) => {
+        this.plugins.push(p);
+        injectHookPlugin(p);
+      });
+    }else{
+      this.plugins.push(plugin as Plugin);
+      injectHookPlugin(plugin);
+    }
   }
 
-  use(middleware:Function){
+  use(middleware:Middleware){
     // Koa MiddleWare
     this.koaMiddlewares.push(middleware)
   }
@@ -97,10 +85,13 @@ export class Server{
   }
 }
 
-export function getServer(staticDir?: string):Server{
-  if(server){
-    return server
-  }else{
-    return server = new Server(staticDir)
-  }
+export function getServer(port:number = defaultPort){
+  const server = new Server(port);
+  server.apply(new LogPlugin())
+  return server
 }
+
+export const server = getServer(defaultPort)
+export * from './plugin'
+
+export default server;

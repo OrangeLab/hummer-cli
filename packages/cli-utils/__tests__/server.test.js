@@ -1,6 +1,6 @@
 const WebSocket = require('ws');
 
-const ws = new WebSocket('ws://127.0.0.1:8080');
+const ws = new WebSocket('ws://127.0.0.1:8081');
 
 ws.on('open', function open() {
   let log = {
@@ -14,5 +14,6 @@ ws.on('open', function open() {
 });
 
 ws.on('message', function incoming(data) {
+  console.log('GET DATA')
   console.log(data);
 });

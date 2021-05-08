@@ -13,19 +13,16 @@ export class WsServer extends EventEmitter {
   }
 
   start() {
-    const wss = new WebSocketServer({ server: this.server.app })
+    const wss = new WebSocketServer({ server: this.server.server })
     this.emit('start')
     wss.on('connection', (socket: WebSocket) => {
-      console.warn('web socket connection ...')
       this.socketConns.push(socket)
       this.emit('connection')
       socket.on('message', (data: any) => {
         this.emit('message', data)
-        console.warn('receive message from ws: ', data)
       })
       socket.on('close', () => {
         this.emit('close')
-        console.warn('web socket disconnection ...')
         this.socketConns = this.socketConns.filter((_socket) => (_socket !== socket))
       })
     })
@@ -39,8 +36,19 @@ export class WsServer extends EventEmitter {
   }
 
   stop() {
-    this.wss && this.wss.close()
-    this.socketConns = []
+    return new Promise((resolve, reject) => {
+      if(!this.wss){
+        reject(new Error('Socket 服务不存在'))
+        return
+      }
+      this.wss.close((err) => {
+        if(err){
+          reject(err)
+        }
+        resolve("success")
+      })
+      this.socketConns = []
+    })
   }
 
 }
