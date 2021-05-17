@@ -1,3 +1,29 @@
 {
-  "template": ["template-vue", "template-ts","template-library", "template-android", "template-ios"]
+  "templates": [
+    {
+      "name": "template-vue",
+      "package": "@hummer/cli-template-vue",
+      "needInstall": true
+    },
+    {
+      "name": "template-ts",
+      "package": "@hummer/cli-template-ts",
+      "needInstall": true
+    },
+    {
+      "name": "template-library",
+      "package": "@hummer/cli-template-library",
+      "needInstall": true
+    },
+    {
+      "name": "template-android",
+      "package": "@hummer/cli-template-android",
+      "needInstall": false
+    },
+    {
+      "name": "template-ios",
+      "package": "@hummer/cli-template-ios",
+      "needInstall": false
+    }
+  ]
 }

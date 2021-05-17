@@ -67,7 +67,9 @@ export class InitPlugin extends Plugin{
   }
 
   private async getRemoteTemplate(){
-    return config.template
+    return config.templates.map((item:Template) => {
+      return item.name
+    })
   }
 
   private getLocalPath(){

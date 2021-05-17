@@ -3,6 +3,12 @@ const metadata = require('read-metadata')
 const exists = require('fs').existsSync
 const exec = require('child_process').execSync
 const validateName = require('validate-npm-package-name')
+const config = require('config.json')
+interface Template{
+  name: string,
+  needInstall: boolean,
+  package: string
+}
 
 export const getGitUser = function (): string {
   let name
@@ -74,4 +80,18 @@ function setValidateName (opts: any) {
     if (typeof customValidate === 'function') return customValidate(name)
     return true
   }
+}
+
+/**
+ * 获取模板仓库列表
+ * @returns Array<string>
+ */
+export function getTemplates():Array<string>{
+  return config.templates.map((item:Template) => {
+    return item.name
+  })
+}
+
+export function getTemplateConfigByName(name:string){
+  return config.templates.some(n)
 }
