@@ -49,6 +49,7 @@ export class BuildPlugin extends Plugin {
       logger.info('✨ Build Success!')
       spinner.stop()
     } catch (err) {
+      logger.error(err.message)
       spinner.stop(err)
     }
   }

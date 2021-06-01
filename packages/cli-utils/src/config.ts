@@ -2,7 +2,9 @@ import * as path from 'path'
 export enum ProjectType {
   TENON = 'tenon',
   HUMMER = 'hummer',
-  LIBRARY = 'library'
+  LIBRARY = 'library',
+  REACT = 'react',
+  VUE = 'vue'
 }
 
 export interface ProjectConfig {
