@@ -1,3 +1,3 @@
 {
-  "template": ["template-vue", "template-ts","template-library", "template-android", "template-ios"]
+  "template": ["template-vue","template-react", "template-ts","template-library", "template-android", "template-ios"]
 }
