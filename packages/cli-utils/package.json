@@ -1,6 +1,6 @@
 {
   "name": "@hummer/cli-utils",
-  "version": "0.1.16",
+  "version": "0.1.27",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
