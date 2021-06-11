@@ -98,7 +98,7 @@ export class InitPlugin extends Plugin{
       fse.ensureDirSync(templateDir)
       execSync(`npm pack ${templateName}@${latestversion} --registry=https://registry.npm.taobao.org/`, {
         cwd: templateDir,
-        stdio: ['pipe', 'ignore', 'pipe'],
+        stdio: ['pipe', 'ignore'],
         timeout: 20000
       });
       await tar.x({
