@@ -1,31 +1,31 @@
-import { Configuration,SourceMapDevToolPlugin } from 'webpack'
-import {TenonStylePlugin} from '@hummer/tenon-style-loader'
-import {VueLoaderPlugin} from '@hummer/tenon-loader'
+import { Configuration, SourceMapDevToolPlugin } from 'webpack'
+import { TenonStylePlugin } from '@hummer/tenon-style-loader'
+import { VueLoaderPlugin } from '@hummer/tenon-loader'
 import JsccPlugin from 'webpack-plugin-jscc'
-import {ProjectConfig} from '@hummer/cli-utils'
-import {getAssetsAddress} from '../utils/server'
+import { ProjectConfig } from '@hummer/cli-utils'
+import { getAssetsAddress } from '../utils/server'
 import * as path from 'path'
 
-export default function getDefaultTenonConfiguration(isProduction: boolean, hmConfig?:ProjectConfig): Configuration {
-  let plugins:any = []
-  if(hmConfig){
+export default function getDefaultTenonConfiguration(isProduction: boolean, hmConfig?: ProjectConfig): Configuration {
+  let plugins: any = []
+  if (hmConfig) {
     // TODO 自定义插件的配置，在这里进行拓展
     // TODO Validate Jscc Config
-    if(hmConfig.jscc){
+    if (hmConfig.jscc) {
       plugins.push(new JsccPlugin(hmConfig.jscc))
     }
   }
-  if(!isProduction){
+  if (!isProduction) {
     //issue:27 Modify SourceMapUrl 
     plugins.push(new SourceMapDevToolPlugin({
       module: true,
       columns: false,
       filename: "[name].js.map",
-      append: '\n//# sourceMappingURL='+ getAssetsAddress() + '[url]'
+      append: '\n//# sourceMappingURL=' + getAssetsAddress() + '[url]'
     }))
   }
   return {
-    mode: isProduction?'production':'development',
+    mode: isProduction ? 'production' : 'development',
     devtool: isProduction ? 'hidden-source-map' : 'cheap-module-source-map',
     output: {
       publicPath: './'
@@ -33,7 +33,7 @@ export default function getDefaultTenonConfiguration(isProduction: boolean, hmCo
     resolve: {
       alias: {
       },
-      extensions: [".js",'.json',".jsx",".vue", ".css" ]
+      extensions: [".ts", ".js", '.json', ".jsx", ".vue", ".css"]
     },
     externals: {
       '@hummer/hummer-front': '__GLOBAL__',
@@ -48,7 +48,7 @@ export default function getDefaultTenonConfiguration(isProduction: boolean, hmCo
       }, {
         test: /\.less$/,
         use: [require.resolve('less-loader')]
-      },{
+      }, {
         test: /\.(png|jpg|jpeg|gif)$/i,
         use: [
           {
@@ -60,19 +60,22 @@ export default function getDefaultTenonConfiguration(isProduction: boolean, hmCo
           }
         ],
       }, {
-        test: /\.js$/,
+        test: /\.(t|j)s$/,
         use: {
           loader: require.resolve('babel-loader'),
           options: {
             presets: [
               [
-                require.resolve('@babel/preset-env'), 
+                require.resolve('@babel/preset-env'),
                 {
                   targets: {
                     "ios": "9"
                   }
                 }
-              ]
+              ],
+              [require.resolve('@babel/preset-typescript'), {
+                allExtensions: true
+              }]
             ],
             plugins: [
               [require.resolve('@babel/plugin-transform-runtime'), {
@@ -93,6 +96,6 @@ export default function getDefaultTenonConfiguration(isProduction: boolean, hmCo
         }
       },]
     },
-    plugins: [new TenonStylePlugin(),new VueLoaderPlugin(), ...plugins]
+    plugins: [new TenonStylePlugin(), new VueLoaderPlugin(), ...plugins]
   }
 }
