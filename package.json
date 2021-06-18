@@ -11,7 +11,8 @@
     "build:watch": "lerna run --parallel build:watch",
     "bootstrap": "npm install && npx lerna bootstrap",
     "clean": "lerna clean --yes && rm -rf ./packages/**/package-lock.json",
-    "clean:lock": "rm -rf ./package-lock.json && rm -rf ./packages/**/package-lock.json"
+    "clean:lock": "rm -rf ./package-lock.json && rm -rf ./packages/**/package-lock.json",
+    "pub": "npm run build && npm run clean:lock && npx lerna publish --conventional-commits  && git push --tags"
   },
   "author": "",
   "license": "ISC",
