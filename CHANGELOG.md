@@ -5,10 +5,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 # [0.2.0](https://github.com/OrangeLab/hummer-cli/compare/v0.1.27...v0.2.0) (2021-06-18)
 
-**Note:** Version bump only for package @hummer/cli-utils
 
+### Features
 
-
-
-
-# Change Log
+* tenon vue project support ts ([6e4235b](https://github.com/OrangeLab/hummer-cli/commit/6e4235bdc5f0fececdf7246b66a4289ff5217c13))
