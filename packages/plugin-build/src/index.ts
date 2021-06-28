@@ -59,6 +59,10 @@ export class BuildPlugin extends Plugin {
     if (!this.options.NODE_ENV) {
       this.options.NODE_ENV = "development"
     }
+    // Dev 环境变量默认打开 Map 开关
+    if(!this.options.map){
+      this.options.map = true
+    }
     let config = await this.getWebpackConfig();
     let compiler = new Compiler();
     compiler.initConfig(config);
@@ -74,7 +78,7 @@ export class BuildPlugin extends Plugin {
       process.exit();
     }
     let { type, webpack } = projectConfig
-    let defaultConfig = getDefaultConfig(isProduction, type, projectConfig)
+    let defaultConfig = getDefaultConfig(isProduction, type, projectConfig, this)
     if (webpack) {
       if (webpack.entries) {
         let entry = getEntries(webpack.entries, type)

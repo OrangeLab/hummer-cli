@@ -5,9 +5,11 @@ import JsccPlugin from 'webpack-plugin-jscc'
 import { ProjectConfig } from '@hummer/cli-utils'
 import { getAssetsAddress } from '../utils/server'
 import * as path from 'path'
+import { BuildPlugin } from '..'
 
-export default function getDefaultTenonConfiguration(isProduction: boolean, hmConfig?: ProjectConfig): Configuration {
+export default function getDefaultTenonConfiguration(isProduction: boolean, hmConfig: ProjectConfig, context: BuildPlugin): Configuration {
   let plugins: any = []
+  let { map: needMap } = context.options
   if (hmConfig) {
     // TODO 自定义插件的配置，在这里进行拓展
     // TODO Validate Jscc Config
@@ -24,9 +26,12 @@ export default function getDefaultTenonConfiguration(isProduction: boolean, hmCo
       append: '\n//# sourceMappingURL=' + getAssetsAddress() + '[url]'
     }))
   }
-  return {
-    mode: isProduction ? 'production' : 'development',
+  let devToolConfig = needMap ? {
     devtool: isProduction ? 'hidden-source-map' : 'cheap-module-source-map',
+  }: null;
+  return {
+    ...devToolConfig,
+    mode: isProduction ? 'production' : 'development',
     output: {
       publicPath: './'
     },

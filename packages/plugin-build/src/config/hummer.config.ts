@@ -1,20 +1,27 @@
 import { Configuration, SourceMapDevToolPlugin } from 'webpack'
-import {getAssetsAddress} from '../utils/server'
+import { getAssetsAddress } from '../utils/server'
+import { BuildPlugin } from '../index'
 
-export default function getDefaultHummerConfiguration(isProduction: boolean): Configuration {
+
+export default function getDefaultHummerConfiguration(isProduction: boolean, context: BuildPlugin): Configuration {
   let plugins = []
-  if(!isProduction){
+  let { map: needMap } = context.options
+
+  if (!isProduction) {
     //issue:27 Modify SourceMapUrl 
     plugins.push(new SourceMapDevToolPlugin({
       module: true,
       columns: false,
       filename: "[name].js.map",
-      append: '\n//# sourceMappingURL='+ getAssetsAddress() + '[url]'
+      append: '\n//# sourceMappingURL=' + getAssetsAddress() + '[url]'
     }))
   }
-  return {
-    mode: isProduction ? 'production' : 'development',
+  let devToolConfig = needMap ? {
     devtool: isProduction ? 'hidden-source-map' : 'cheap-module-source-map',
+  } : null;
+  return {
+    ...devToolConfig,
+    mode: isProduction ? 'production' : 'development',
     output: {
       publicPath: './'
     },
