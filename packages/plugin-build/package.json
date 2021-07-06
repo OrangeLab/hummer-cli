@@ -34,7 +34,7 @@
     "@hummer/cli-core": "^0.3.0",
     "@hummer/cli-utils": "^0.3.0",
     "@hummer/tenon-loader": "^1.0.5",
-    "@hummer/tenon-style-loader": "^0.1.0",
+    "@hummer/tenon-style-loader": "^0.2.0",
     "@types/ws": "^7.2.9",
     "address": "^1.1.2",
     "archiver": "^5.3.0",
