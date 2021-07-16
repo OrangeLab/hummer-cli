@@ -1,4 +1,4 @@
-import { Configuration, SourceMapDevToolPlugin } from 'webpack'
+import { Configuration, SourceMapDevToolPlugin, DefinePlugin } from 'webpack'
 import { TenonStylePlugin } from '@hummer/tenon-style-loader'
 import { VueLoaderPlugin } from '@hummer/tenon-loader'
 import JsccPlugin from 'webpack-plugin-jscc'
@@ -101,6 +101,8 @@ export default function getDefaultTenonConfiguration(isProduction: boolean, hmCo
         }
       },]
     },
-    plugins: [new TenonStylePlugin(), new VueLoaderPlugin(), ...plugins]
+    plugins: [new TenonStylePlugin(), new VueLoaderPlugin(),new DefinePlugin({
+      "NODE_DEBUG": JSON.stringify(isProduction? false: true) // 控制是否注入 DevTool
+    }), ...plugins]
   }
 }

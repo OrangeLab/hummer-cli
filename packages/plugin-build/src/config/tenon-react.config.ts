@@ -1,4 +1,4 @@
-import { Configuration,SourceMapDevToolPlugin } from 'webpack'
+import { Configuration,SourceMapDevToolPlugin,DefinePlugin } from 'webpack'
 import {TenonStylePlugin} from '@hummer/tenon-style-loader'
 import JsccPlugin from 'webpack-plugin-jscc'
 import {ProjectConfig} from '@hummer/cli-utils'
@@ -98,6 +98,8 @@ export default function getTenonReactConfiguration(isProduction: boolean, hmConf
     },
     plugins: [new TenonStylePlugin({
       packageName: '@hummer/tenon-react'
+    }),new DefinePlugin({
+      "NODE_DEBUG": JSON.stringify(isProduction? false: true)  // 控制是否注入 DevTool
     }), ...plugins]
   }
 }
