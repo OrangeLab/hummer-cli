@@ -1,14 +1,9 @@
-'use strict';
-const ProxyServer = require('./ProxyServer');
-// const Koa = require('koa')
+import { ProxyServer } from './ProxyServer';
 const { getHost, getPort } = require('./utils');
 const { createServer } = require('http');
 
-
-function runProxyServer (port) {
+function runProxyServer (port?: Number) {
     port = port || getPort()
-    // const app = new Koa()
-    // Todo: 使用 koa middleware 处理路由逻辑 是否需要 app.callback()
     const proxyServer = new ProxyServer()
     const httpServer = createServer()
     httpServer.listen({ port }, () => {
@@ -17,6 +12,5 @@ function runProxyServer (port) {
     })
 }
 
-runProxyServer()
-// module.exports = { proxyServer: runProxyServer }
+export { ProxyServer, runProxyServer }
 

@@ -1,17 +1,25 @@
-'use strict';
 
-class Native {
-    constructor(id, name, socket, emit) {
+import * as WebSocket from 'ws'
+import { EventEmitter } from 'events'
+
+export class Native {
+    private id:Number = 0;
+    private name:String = '';
+    private _nativeSocket:WebSocket
+    private _emit:EventEmitter
+    // private _pages:Array = []
+
+    constructor(id:Number, name:String, socket:WebSocket, emit:EventEmitter) {
         this.id = id
         this.name = name || 'Unknown'
         this._nativeSocket = socket
         this._emit = emit
-        this._pages = [] // Tip: 页面管理
+        // this._pages = [] // Tip: 页面管理
         this._addSocketHandler()
     }
 
     _addSocketHandler() {
-        this._nativeSocket.on('message', (message) => {
+        this._nativeSocket.on('message', (message:any) => {
             try {
                 message = JSON.parse(message);
                 this._emit.emit('native', message, {
@@ -24,7 +32,7 @@ class Native {
         })
     }
 
-    sendMessageToNative(message) {
+    sendMessageToNative(message:any) {
         try {
             this._nativeSocket.send(JSON.stringify(message))
         } catch (error) {
@@ -32,5 +40,3 @@ class Native {
         }
     }
 }
-
-module.exports = Native

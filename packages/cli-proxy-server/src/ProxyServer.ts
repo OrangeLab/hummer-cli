@@ -1,44 +1,47 @@
-'use strict';
-const WebSocket = require('ws')
-const { EventEmitter } = require('events')
-const Native = require('./Native')
+import * as WebSocket from 'ws'
+import { EventEmitter } from 'events'
+import type { Server as HttpServer, IncomingMessage } from 'http'
+import type { AddressInfo } from 'net'
+import { Native } from './Native'
 const { getHost } = require('./utils')
-const Url = require('url');
+const Url = require('url')
 
 const WS_NATIVE_URL = '/proxy/native';
 const WS_CLIENT_URL = '/proxy/client';
 const INTERNAL_ERROR_CODE = 1011;
 
-class ProxyServer {
+export class ProxyServer {
+    private _serverAddressWithPort:String = ''
+    private _nativeEmit:EventEmitter = new EventEmitter()
+    private _natives:Map<number, Native> = new Map()
+    private _nativeCount:number = 0
+    private _clientSocket?:WebSocket
 
     constructor() {
-        this._serverAddressWithPort = ''
-        this._nativeWss = null
-        this._clientWss = null
-        this._nativeEmit = new EventEmitter()
-        this._natives = new Map()
-        this._clientSocket = null
-        this._nativeCount = 0
         this._addNativeEmitListener()
     }
 
-    addWebSocketListener(server) {
-        const { port } = server.address()
+    addWebSocketListener(server:HttpServer) {
+        
+        const { port } = server.address() as AddressInfo
         this._serverAddressWithPort = `${getHost()}:${port}`;
         this._addConnectionHandler(server)
     }
+    // @ts-ignore
 
-    _addConnectionHandler(server) {
+    _addConnectionHandler(server:HttpServer) {
         const nativeWss = new WebSocket.Server({ noServer: true })
         const clientWss = new WebSocket.Server({ noServer: true })
         console.warn(`web socket server listening, native can connect ws server by ws://${this._serverAddressWithPort}${WS_NATIVE_URL} ...`)
         console.warn(`web socket server listening, client can connect ws server by ws://${this._serverAddressWithPort}${WS_CLIENT_URL} ...`)
         nativeWss.on('connection', (socket, request) => {
             console.log('nativeWss connection')
+            // @ts-ignore
             this._handleNativeConnection(socket, request, nativeWss)
         })
         clientWss.on('connection', (socket, request) => {
             console.log('clientWss connection')
+            // @ts-ignore
             this._handleClientConnection(socket, request, clientWss)
         })
         server.on('upgrade', (request, socket, head) => {
@@ -56,8 +59,8 @@ class ProxyServer {
             }
         })
     }
-
-    _handleNativeConnection(socket, request, nativeWss) {
+    // @ts-ignore
+    _handleNativeConnection(socket:WebSocket, request:IncomingMessage, nativeWss:WebSocket.Server) {
         try {
             // 记录 native 端
             const nativeId = this._nativeCount++
@@ -70,12 +73,12 @@ class ProxyServer {
                 this._natives.delete(nativeId)
             })
         } catch (error) {
-            console.error('error', e);
-            socket.close(INTERNAL_ERROR_CODE, e);
+            console.error('error', error);
+            socket.close(INTERNAL_ERROR_CODE, error);
         }
     }
-
-    _handleClientConnection(socket, request, clientWss) {
+    // @ts-ignore
+    _handleClientConnection(socket:WebSocket, request:IncomingMessage, clientWss:WebSocket.Server) {
          try {
             this._clientSocket = socket
             socket.on('message', (message) => {
@@ -83,32 +86,35 @@ class ProxyServer {
                 this._handleClientMeaasge(message)
             })
             socket.on('close', () => {
-                this._clientSocket = null
+                this._clientSocket = undefined
             })
         } catch (error) {
-            console.error(e);
-            socket.close(INTERNAL_ERROR_CODE, e);
+            console.error(error);
+            socket.close(INTERNAL_ERROR_CODE, error);
         }
     }
 
-    _handleClientMeaasge(message) {
+    _handleClientMeaasge(message:any) {
         try {
             message = JSON.parse(message)
         } catch (error) {
         }
         const isLegal = this._validateMessage(message, 'client')
         if (isLegal) {
-            this.pushMessageToNatives()
+            this.pushMessageToNatives(message)
         } else {
             // Todo: 约定 msg 无效的情况
-            this._pushMessageToClient()
+            this._pushMessageToClient(message)
         }
     }
     
-    pushMessageToNatives(message) {
-        this._natives.entries().forEach((nativeId, native) => {
-            native.sendMessageToNative(message)
-        })
+    pushMessageToNatives(message:any) {
+        Array.from(this._natives.entries()).forEach(
+            ([nativeId, native]) => {
+                console.log('nativeId', nativeId)
+                native.sendMessageToNative(message)
+            }
+        )
     }
 
     _addNativeEmitListener() {
@@ -118,7 +124,7 @@ class ProxyServer {
         })
     }
 
-    _handleNativeMeaasge(message, nativeInfo) {
+    _handleNativeMeaasge(message:any, nativeInfo:any) {
         const isLegal = this._validateMessage(message, 'native')
         if (isLegal) {
             this._pushMessageToClient(message, nativeInfo)
@@ -127,20 +133,22 @@ class ProxyServer {
             // this.pushMessageToNatives(message)
         }
     }
-    _validateMessage(message, channel) {
+    _validateMessage(message:any, channel:string) {
         let flag = true
+        // Todo: 定义通信协议
         if (Object.prototype.toString.call(message).slice(8, -1) === 'Object') {
             ['type', 'method', 'params', 'protocol-version'].forEach(key => {
                 flag = flag && Object.prototype.hasOwnProperty.call(message, key)
             })
         }
-        // if (channel === 'native') {
-        // } else if(channel === 'client') {
-        // }
+        if (channel === 'native') {
+        } else if(channel === 'client') {
+        }
         return flag
     }
 
-    _pushMessageToClient(message, nativeInfo) {
+    // @ts-ignore
+    _pushMessageToClient(message:any, nativeInfo?:any) {
         // if (message.type == 'Page') {
         // } else if (message.type == 'Log') {
         // } else if (message.type == 'Other') {
@@ -149,7 +157,4 @@ class ProxyServer {
         this._clientSocket && this._clientSocket.send(JSON.stringify(message))
     }
 }
-
-module.exports = ProxyServer
-
 
