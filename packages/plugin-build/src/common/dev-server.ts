@@ -1,4 +1,4 @@
-import * as WebSocket from 'ws'
+// import * as WebSocket from 'ws'
 import * as http from 'http'
 import Koa from 'koa'
 import serve from 'koa-static'
@@ -11,17 +11,15 @@ const htmlRender = require("koa-html-render")
 
 const open = require('open')
 const path = require('path');
-export class WsServer extends EventEmitter {
+export class DevServer extends EventEmitter {
 
-  private wss?: WebSocket.Server
   // @ts-ignore
-  private socketConns: WebSocket[]
   private server?: Server
   private proxyServer?: ProxyServer
 
   constructor(public host: string, public port: number, public staticDir: string) {
     super()
-    this.socketConns = []
+    this.start()
   }
 
   start() {
@@ -46,16 +44,10 @@ export class WsServer extends EventEmitter {
   send(msg: any) {
     // @ts-ignore
     this.proxyServer.pushMessageToNatives(msg)
-    // console.warn(`ws send msg to clients ${this.socketConns.length}`, msg)
-    // this.socketConns.forEach((socket: WebSocket) => {
-    //   socket.send(msg)
-    // })
   }
 
   stop() {
-    this.wss && this.wss.close()
     this.server && this.server.close()
-    this.socketConns = []
   }
 
 }
