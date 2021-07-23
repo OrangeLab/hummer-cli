@@ -13,9 +13,8 @@ const open = require('open')
 const path = require('path');
 export class DevServer extends EventEmitter {
 
-  // @ts-ignore
-  private server?: Server
-  private proxyServer?: ProxyServer
+  private server!: Server
+  private proxyServer!: ProxyServer
 
   constructor(public host: string, public port: number, public staticDir: string) {
     super()
@@ -34,8 +33,7 @@ export class DevServer extends EventEmitter {
     
     this.proxyServer = new ProxyServer()
     this.server.listen({ port: this.port }, () => {
-      console.warn(`Web http server listening , you can connect http server by http://${this.host}:${this.port}/ ...`)
-      // @ts-ignore
+      console.warn(`Web http server listening , you can connect http server by http://${this.host}:${this.port}/ ...`);
       this.proxyServer.addWebSocketListener(this.server)
       open(`http://${this.host}:${this.port}/`)
     })
@@ -43,7 +41,7 @@ export class DevServer extends EventEmitter {
 
   send(msg: any) {
     // @ts-ignore
-    this.proxyServer.pushMessageToNatives(msg)
+    this.proxyServer.pushMsgToTenons(msg)
   }
 
   stop() {

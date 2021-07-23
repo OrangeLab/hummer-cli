@@ -2,7 +2,7 @@
 import * as WebSocket from 'ws'
 import { EventEmitter } from 'events'
 
-export class Native {
+export class Tenon {
   private id: Number = 0;
   private name: String = '';
   private _nativeSocket: WebSocket
@@ -22,7 +22,7 @@ export class Native {
     this._nativeSocket.on('message', (message: any) => {
       try {
         message = JSON.parse(message);
-        this._emit.emit('native', message, {
+        this._emit.emit('tenon', message, {
           id: this.id,
           name: this.name
         })
@@ -32,7 +32,7 @@ export class Native {
     })
   }
 
-  sendMessageToNative(message: any) {
+  sendMsgToTenon(message: any) {
     try {
       this._nativeSocket.send(JSON.stringify(message))
     } catch (error) {
