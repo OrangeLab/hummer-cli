@@ -137,29 +137,67 @@ export class ProxyServer {
     try {
       const paresMsg = JSON.parse(message)
       if (paresMsg.hasOwnProperty('type') && paresMsg.hasOwnProperty('method')) {
-        this._handleMethod(paresMsg)
+        this._handleMsgByType(paresMsg)
       } else {
-        // Todo
+        this.pushMsgToTenons(paresMsg)
       }
     } catch (error) {
       console.log('_handleClientMsg has error', error)
     }
   }
 
-  _handleMethod(msg:any) {
-    if (msg.method == 'getPageList') {
-      const data = {
-        method: 'getPageList',
-        data: this._getCurActiveTenons()
-      }
-      this._pushMsgToClient(data)
-    } else if (msg.method == 'getViewTree') {
-      const { tenonId } = msg.params
-      const tenon = this._tenons.get(tenonId)
-      if (tenon) {
-        tenon.sendMsgToTenon(msg)
-      }
+  _handleMsgByType(msg:any) {
+    if (msg.type == 'page') {
+      this._handlePageMethod(msg)
+    } else if (msg.type == 'view') {
+      this._handleViewMethod(msg)
+    } else {
+      // Todo: 非协议类型字段 type
     }
+  }
+
+  _handlePageMethod(msg:any) {
+    const method = msg.method
+    switch (method) {
+      case 'getPageList':
+        const data = this._getCurActiveTenons()
+        const msg = {
+          type: 'page',
+          method: 'sendPageList',
+          data
+        }
+        this._pushMsgToClient(msg)
+        break;
+      default:
+        break;
+    }
+  }
+
+  // TODO:处理参数
+  _handleViewMethod(msg:any) {
+    const { tenonId } = msg.params
+    const tenon = this._tenons.get(tenonId)
+    tenon && tenon.sendMsgToTenon(msg)
+    // switch (method) {
+    //   case 'getViewTree':
+    //     {
+    //       const { tenonId } = params
+    //       const tenon = this._tenons.get(tenonId)
+    //       tenon && tenon.sendMsgToTenon(msg)
+    //     }
+    //     break;
+    //   case 'highlightView':
+    //     {
+    //       const { tenonId, viewId } = params
+    //       const tenon = this._tenons.get(tenonId)
+    //       tenon && tenon.sendMsgToTenon(msg)
+    //     }
+    //     break;
+    //   case 'getViewDetail':
+    //     break;
+    //   default:
+    //     break;
+    // }
   }
 
   pushMsgToTenons(message: any) {
@@ -178,41 +216,19 @@ export class ProxyServer {
   }
 
   _addTenonEmitListener() {
-    this._tenonEmit.on('tenon', (message, nativeInfo) => {
-      console.log('recevie msg from tenon >>> ', message, nativeInfo)
-      this._handleTenonEmitMsg(message, nativeInfo)
+    this._tenonEmit.on('message', (message, tenonInfo) => {
+      console.log('proxy recevie msg from tenon >>>>>> ', message, tenonInfo)
+      this._handleTenonEmitMsg(message, tenonInfo)
     })
   }
 
-  _handleTenonEmitMsg(message: any, nativeInfo: any) {
-    // Todo: 通知 native 不符合协议
-    this._pushMsgToClient(message, nativeInfo)
-
-    // const isLegal = this._validateMessage(message, 'native')
-    // if (isLegal) {
-    //   this._pushMsgToClient(message, nativeInfo)
-    // } else {
-    //   // Todo: 通知 native 不符合协议
-    //   // this.pushMsgToTenons(message)
-    // }
-  }
-
-  // Todo: 校验待完善
-  _validateMessage(message: any, channel: string) {
-    let flag = true
-    if (Object.prototype.toString.call(message).slice(8, -1) === 'Object') {
-      ['type', 'method', 'params', 'protocol-version'].forEach(key => {
-        flag = flag && Object.prototype.hasOwnProperty.call(message, key)
-      })
-    }
-    if (channel === 'native') {
-    } else if (channel === 'client') {
-    }
-    return flag
+  _handleTenonEmitMsg(message: any, tenonInfo: any) {
+    // Tip: tenon runtime check
+    this._pushMsgToClient(message, tenonInfo)
   }
 
   // @ts-ignore
-  _pushMsgToClient(message: any, nativeInfo?: any) {
+  _pushMsgToClient(message: any, tenonInfo?: any) {
     this._clientSocket && this._clientSocket.send(JSON.stringify(message))
   }
 }
