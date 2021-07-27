@@ -1,6 +1,6 @@
 import webpack from 'webpack'
 import { Stats } from 'webpack'
-import { WsServer } from './common/ws-server'
+import { DevServer } from './common/dev-server'
 import { getServerConfig,  getHost} from './utils'
 import * as fs from 'fs'
 import { fse } from '@hummer/cli-utils'
@@ -30,15 +30,13 @@ export class Compiler {
   }
 
   async dev() {
-    // 启动Dev Server And Websocket Server
+    // 启动 DevServer，其中包含http & websocket
     // 默认 path.join(process.cwd(), 'dist')
     let rootDir = this.config?.output?.path ?? path.join(process.cwd(), 'dist');
     fse.ensureDirSync(rootDir);
     let {port, host} = await getServerConfig();
-    var ws = new WsServer(host, port, rootDir);
-    ws.start();
-    this.startWatchServer({ host, port, rootDir }, ws);
-
+    var devServer = new DevServer(host, port, rootDir);
+    this.startWatchServer({ host, port, rootDir }, devServer);
     this.buildWatch((stats: Stats) => {
       this.printStats(stats);
     })
@@ -84,7 +82,7 @@ export class Compiler {
     // console.log(output)
   }
 
-  startWatchServer({ port, rootDir }: any, ws: any) {
+  startWatchServer({ port, rootDir }: any, devServer: any) {
     fs.watch(rootDir, { recursive: true }, (_event, fileName) => {
       if (!/\.js$/.test(fileName)) {
         return
@@ -96,7 +94,7 @@ export class Compiler {
           url: `http://${getHost()}:${port}/${fileName}`
         }
       }
-      ws.send(JSON.stringify(message))
+      devServer.send(message)
     })
   }
 }

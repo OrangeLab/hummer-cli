@@ -2,14 +2,26 @@
   "name": "@hummer/cli-proxy-server",
   "version": "0.2.0",
   "description": "a proxy between debugger client and debugger native playground",
-  "main": "./src/index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "typings": "dist/index.d.ts",
+  "bin": "dist/cli.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npx ../../node_modules/.bin/jest --coverage",
+    "test:watch": "npx ../../node_modules/.bin/jest --watch --collectCoverage=false",
+    "test:debug": "DEBUG=hummer* npx ../../node_modules/.bin/jest --coverage",
+    "build": "npx ../../node_modules/.bin/tsc",
+    "build:watch": "npx ../../node_modules/.bin/tsc -w",
+    "prepublishOnly": "rm -rf dist && npm run build"
   },
   "author": "jayconscious",
   "license": "ISC",
   "dependencies": {
     "address": "^1.1.2",
-    "ws": "^7.5.3"
+    "ws": "^7.5.3",
+    "yargs": "^13.0.1"
+  },
+  "devDependencies": {
+    "@types/ws": "^7.4.7"
   }
 }
