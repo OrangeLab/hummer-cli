@@ -1,6 +1,6 @@
 {
   "name": "@hummer/cli-proxy-server",
-  "version": "1.0.0",
+  "version": "0.2.0",
   "description": "a proxy between debugger client and debugger native playground",
   "main": "./src/index.js",
   "scripts": {

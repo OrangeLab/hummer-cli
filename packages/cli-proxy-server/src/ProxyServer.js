@@ -106,7 +106,7 @@ class ProxyServer {
     }
     
     pushMessageToNatives(message) {
-        this._natives.entries().forEach((nativeId, native) => {
+        this._natives.forEach((native, nativeId) => {
             native.sendMessageToNative(message)
         })
     }
