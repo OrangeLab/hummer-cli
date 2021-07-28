@@ -149,7 +149,7 @@ export class ProxyServer {
   _handleMethod(msg:any) {
     if (msg.method == 'getPageList') {
       const data = {
-        method: 'getPageList',
+        method: 'setPageList',
         data: this._getCurActiveTenons()
       }
       this._pushMsgToClient(data)

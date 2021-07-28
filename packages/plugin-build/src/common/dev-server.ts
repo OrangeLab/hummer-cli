@@ -26,7 +26,7 @@ export class DevServer extends EventEmitter {
     this.server = http.createServer(app.callback())
 
     app.use(serve(this.staticDir));
-    app.use(serve(path.resolve(__dirname, '../../preview')));
+    app.use(serve(path.resolve(__dirname, '../../node_modules/@hummer/devtools-frontend/dist')));
     app.use(htmlRender('preview'));
     app.use(handleFileMiddleware(this.staticDir));
     app.use(handleIndexMiddleware());

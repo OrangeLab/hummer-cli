@@ -22,6 +22,7 @@ export class Tenon {
     this._nativeSocket.on('message', (message: any) => {
       try {
         message = JSON.parse(message);
+        message.params.tenonId = this.id
         this._emit.emit('tenon', message, {
           id: this.id,
           name: this.name
