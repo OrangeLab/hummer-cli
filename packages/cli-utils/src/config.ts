@@ -8,7 +8,7 @@ export enum ProjectType {
 }
 
 export interface ProjectConfig {
-  type?: ProjectType,
+  type: ProjectType,
   webpack: any,
   entries?: string,
   jscc?: any // TODO 配置标准化

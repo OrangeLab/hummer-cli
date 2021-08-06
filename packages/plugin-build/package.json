@@ -1,6 +1,6 @@
 {
   "name": "@hummer/cli-plugin-build",
-  "version": "0.2.0",
+  "version": "0.3.1",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -35,7 +35,7 @@
     "@hummer/cli-utils": "^0.2.0",
     "@hummer/cli-proxy-server": "^0.2.0",
     "@hummer/tenon-loader": "^1.0.5",
-    "@hummer/tenon-style-loader": "^0.1.0",
+    "@hummer/tenon-style-loader": "^0.2.0",
     "@types/ws": "^7.2.9",
     "address": "^1.1.2",
     "archiver": "^5.3.0",

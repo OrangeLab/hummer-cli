@@ -1,11 +1,16 @@
 import { Configuration } from 'webpack'
+import { BuildPlugin } from '..';
 
-export default function getDefaultLibraryConfiguration(isProduction: boolean): Configuration {
+export default function getDefaultLibraryConfiguration(isProduction: boolean, context: BuildPlugin): Configuration {
+    let { map: needMap } = context.options
+    let devToolConfig = needMap ? {
+        devtool: isProduction ? 'hidden-source-map' : 'cheap-module-source-map',
+    } : null;
     return {
+        ...devToolConfig,
         mode: isProduction ? 'production' : 'development',
         // Stop compilation early in production
         bail: isProduction,
-        devtool: isProduction ? 'hidden-source-map' : 'cheap-module-source-map',
         output: {
             // this defaults to 'window', but by setting it to 'this' then
             // module chunks which are built will work in web workers as well.

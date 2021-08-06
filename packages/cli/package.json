@@ -1,6 +1,6 @@
 {
   "name": "@hummer/cli",
-  "version": "0.2.0",
+  "version": "0.3.1",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -26,12 +26,12 @@
   "author": "段丽康",
   "license": "ISC",
   "dependencies": {
-    "@hummer/cli-core": "^0.2.0",
-    "@hummer/cli-plugin-build": "^0.2.0",
-    "@hummer/cli-plugin-debug": "^0.2.0",
-    "@hummer/cli-plugin-device": "^0.2.0",
-    "@hummer/cli-plugin-init": "^0.2.0",
-    "@hummer/cli-utils": "^0.2.0"
+    "@hummer/cli-core": "^0.3.0",
+    "@hummer/cli-plugin-build": "^0.3.1",
+    "@hummer/cli-plugin-debug": "^0.3.0",
+    "@hummer/cli-plugin-device": "^0.3.0",
+    "@hummer/cli-plugin-init": "^0.3.0",
+    "@hummer/cli-utils": "^0.3.0"
   },
   "gitHead": "2c2a8eee7beca6ffae43e8c0f8a32a8232851782"
 }
