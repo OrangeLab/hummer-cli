@@ -81,9 +81,28 @@ export class ProxyServer {
   _addNativeMsgListener(socket: WebSocket, request: IncomingMessage, nativeWss: WebSocket.Server) {
     try {
       this._nativeSocket = socket
+      
       socket.on('message', (message:string) => {
-        console.log('native msg', message)
-        this._handleNativeMsg(message)
+        console.log('native msg', message, typeof message)
+        // native 过来的数据parse后的结构为
+        // {
+        //   type: 'log',
+        //   data: {
+        //     level: 1,
+        //     message: '[时间] logloglog'
+        //   }
+        // }
+        // 我们包装一下数据再向client透传
+        let msg = JSON.parse(message)
+        let finMsg = {
+          type: 'log',
+          method: 'updateLogList',
+          params: {
+            message: msg.data.message,
+            level: msg.data.level
+          }
+        }
+        this._handleNativeMsg(JSON.stringify(finMsg))
       })
       socket.on('close', () => {
         this._nativeSocket = undefined
@@ -102,9 +121,22 @@ export class ProxyServer {
         tenonId,
         new Tenon(tenonId, '', socket, this._tenonEmit)
       )
-      socket.on('close', (msg) => {
-        console.log(msg)
+
+      // 新socket进来主动推给client
+      this._setPageList()
+      this._setNotify({
+        type: 'success',
+        message: `Page-${tenonId}已连接`
+      })
+      socket.on('close', (msg: any) => {
+        console.log(`来自Tenon端的socket已关闭,TenonId:${tenonId}, CLOSE_CODE: ${msg}`)
         this._tenons.delete(tenonId)
+        // socket断开后主动推给client
+        this._setPageList()
+        this._setNotify({
+          type: 'warning',
+          message: `Page-${tenonId}已断开连接`
+        })
       })
     } catch (error) {
       console.error('error', error);
@@ -116,6 +148,10 @@ export class ProxyServer {
   _addClientMsgListener(socket: WebSocket, request: IncomingMessage, clientWss: WebSocket.Server) {
     try {
       this._clientSocket = socket
+      this._setNotify({
+        message: 'Log 服务已就绪',
+        type: 'info'
+      })
       socket.on('message', (message:string) => {
         console.log('recevie msg from client >>>>', message)
         this._handleClientMsg(message)
@@ -130,36 +166,49 @@ export class ProxyServer {
   }
 
   _handleNativeMsg(message:string) {
-    this._pushMsgToClient(message)
+    
+    this._pushMsgToClient(JSON.parse(message))
   }
 
   _handleClientMsg(message:string) {
     try {
       const paresMsg = JSON.parse(message)
       if (paresMsg.hasOwnProperty('type') && paresMsg.hasOwnProperty('method')) {
-        this._handleMethod(paresMsg)
+        this._handleMsgByType(paresMsg)
       } else {
-        // Todo
+        this.pushMsgToTenons(paresMsg)
       }
     } catch (error) {
       console.log('_handleClientMsg has error', error)
     }
   }
 
-  _handleMethod(msg:any) {
-    if (msg.method == 'getPageList') {
-      const data = {
-        method: 'setPageList',
-        data: this._getCurActiveTenons()
-      }
-      this._pushMsgToClient(data)
-    } else if (msg.method == 'getViewTree') {
-      const { tenonId } = msg.params
-      const tenon = this._tenons.get(tenonId)
-      if (tenon) {
-        tenon.sendMsgToTenon(msg)
-      }
+  _handleMsgByType(msg:any) {
+    if (msg.type == 'page') {
+      this._handlePageMethod(msg)
+    } else if (msg.type == 'view') {
+      this._handleViewMethod(msg)
+    } else {
+      // Todo: 非协议类型字段 type
     }
+  }
+
+  _handlePageMethod(msg:any) {
+    const method = msg.method
+    switch (method) {
+      case 'getPageList':
+        this._setPageList()
+        break;
+      default:
+        break;
+    }
+  }
+
+  // TODO:处理参数
+  _handleViewMethod(msg:any) {
+    const { tenonId } = msg.params
+    const tenon = this._tenons.get(tenonId)
+    tenon && tenon.sendMsgToTenon(msg)
   }
 
   pushMsgToTenons(message: any) {
@@ -178,42 +227,45 @@ export class ProxyServer {
   }
 
   _addTenonEmitListener() {
-    this._tenonEmit.on('tenon', (message, nativeInfo) => {
-      console.log('recevie msg from tenon >>> ', message, nativeInfo)
-      this._handleTenonEmitMsg(message, nativeInfo)
+    this._tenonEmit.on('message', (message, tenonInfo) => {
+      console.log('proxy recevie msg from tenon >>>>>> ', message, tenonInfo)
+      this._handleTenonEmitMsg(message, tenonInfo)
     })
   }
 
-  _handleTenonEmitMsg(message: any, nativeInfo: any) {
-    // Todo: 通知 native 不符合协议
-    this._pushMsgToClient(message, nativeInfo)
-
-    // const isLegal = this._validateMessage(message, 'native')
-    // if (isLegal) {
-    //   this._pushMsgToClient(message, nativeInfo)
-    // } else {
-    //   // Todo: 通知 native 不符合协议
-    //   // this.pushMsgToTenons(message)
-    // }
-  }
-
-  // Todo: 校验待完善
-  _validateMessage(message: any, channel: string) {
-    let flag = true
-    if (Object.prototype.toString.call(message).slice(8, -1) === 'Object') {
-      ['type', 'method', 'params', 'protocol-version'].forEach(key => {
-        flag = flag && Object.prototype.hasOwnProperty.call(message, key)
-      })
-    }
-    if (channel === 'native') {
-    } else if (channel === 'client') {
-    }
-    return flag
+  _handleTenonEmitMsg(message: any, tenonInfo: any) {
+    // Tip: tenon runtime check
+    this._pushMsgToClient(message, tenonInfo)
   }
 
   // @ts-ignore
-  _pushMsgToClient(message: any, nativeInfo?: any) {
+  _pushMsgToClient(message: any, tenonInfo?: any) {
     this._clientSocket && this._clientSocket.send(JSON.stringify(message))
+  }
+
+  // 向client端推送页面列表
+  _setPageList() {
+    const pageList = this._getCurActiveTenons()
+    const msg = {
+      type: 'page',
+      method: 'setPageList',
+      params: {
+        pageList
+      }
+    }
+    this._pushMsgToClient(msg)
+  }
+
+  _setNotify(notifyConfig: any) {
+    !notifyConfig.title && (notifyConfig.title = '提示')
+    const msg = {
+      type: 'page',
+      method: 'setNotify',
+      params: {
+        notifyConfig
+      }
+    }
+    this._pushMsgToClient(msg)
   }
 }
 
