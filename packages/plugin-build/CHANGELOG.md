@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0](https://github.com.cnpmjs.org/OrangeLab/hummer-cli/compare/v0.3.1...v0.4.0) (2021-08-09)
+
+
+### Features
+
+* **build:** 打包增加"NODE_DEBUG"环境变量,用于控制是否开启 DevTool ([88afe1e](https://github.com.cnpmjs.org/OrangeLab/hummer-cli/commit/88afe1e18acf1f1345ad62ce2ccd13597d40f902))
+
+
+
+
+
 ## [0.3.1](https://github.com/OrangeLab/hummer-cli/compare/v0.3.0...v0.3.1) (2021-07-06)
 
 **Note:** Version bump only for package @hummer/cli-plugin-build
