@@ -102,7 +102,7 @@ export default function getDefaultTenonConfiguration(isProduction: boolean, hmCo
       },]
     },
     plugins: [new TenonStylePlugin(), new VueLoaderPlugin(),new DefinePlugin({
-      "NODE_DEBUG": JSON.stringify(isProduction? false: true) // 控制是否注入 DevTool
+      "NODE_DEBUG_ENV": JSON.stringify(isProduction? false: true) // 控制是否注入 DevTool
     }), ...plugins]
   }
 }

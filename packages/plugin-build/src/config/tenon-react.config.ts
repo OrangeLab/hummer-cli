@@ -99,7 +99,7 @@ export default function getTenonReactConfiguration(isProduction: boolean, hmConf
     plugins: [new TenonStylePlugin({
       packageName: '@hummer/tenon-react'
     }),new DefinePlugin({
-      "NODE_DEBUG": JSON.stringify(isProduction? false: true)  // 控制是否注入 DevTool
+      "NODE_DEBUG_ENV": JSON.stringify(isProduction? false: true)  // 控制是否注入 DevTool
     }), ...plugins]
   }
 }
