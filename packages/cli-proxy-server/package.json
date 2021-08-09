@@ -6,6 +6,9 @@
   "types": "dist/index.d.ts",
   "typings": "dist/index.d.ts",
   "bin": "dist/cli.js",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "test": "npx ../../node_modules/.bin/jest --coverage",
     "test:watch": "npx ../../node_modules/.bin/jest --watch --collectCoverage=false",
@@ -23,5 +26,6 @@
   },
   "devDependencies": {
     "@types/ws": "^7.4.7"
-  }
+  },
+  "gitHead": "7bb45fd0ceeb5e1af81ad5b2e20b44d61da2150a"
 }
