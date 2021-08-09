@@ -61,15 +61,15 @@ export class ProxyServer {
     server.on('upgrade', (request, socket, head) => {
       const { pathname } = Url.parse(request.url)
       if (pathname === WS_NATIVE_URL) {
-        nativeWss.handleUpgrade(request, socket, head, (ws) => {
+        nativeWss.handleUpgrade(request, socket as any, head, (ws) => {
           nativeWss.emit('connection', ws, request)
         })
       } else if (pathname === WS_CLIENT_URL) {
-        clientWss.handleUpgrade(request, socket, head, (ws) => {
+        clientWss.handleUpgrade(request, socket as any, head, (ws) => {
           clientWss.emit('connection', ws, request)
         })
       } else if (pathname === WS_TENON_URL) {
-        tenonWss.handleUpgrade(request, socket, head, (ws) => {
+        tenonWss.handleUpgrade(request, socket as any, head, (ws) => {
           tenonWss.emit('connection', ws, request)
         })
       } else {
