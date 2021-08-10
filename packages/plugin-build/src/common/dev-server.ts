@@ -11,6 +11,7 @@ const htmlRender = require("koa-html-render")
 
 const open = require('open')
 const path = require('path');
+const fs = require('fs')
 export class DevServer extends EventEmitter {
 
   private server!: Server
@@ -26,7 +27,13 @@ export class DevServer extends EventEmitter {
     this.server = http.createServer(app.callback())
 
     app.use(serve(this.staticDir));
-    app.use(serve(path.resolve(__dirname, '../../node_modules/@hummer/devtools-frontend/dist')));
+    try {
+      fs.accessSync(path.resolve(__dirname, '../../node_modules/@hummer/devtools-frontend/dist'));
+      app.use(serve(path.resolve(__dirname, '../../node_modules/@hummer/devtools-frontend/dist')));
+    } catch (err) {
+      app.use(serve(path.resolve(__dirname, '../../../devtools-frontend/dist')));
+    }
+
     app.use(htmlRender('preview'));
     app.use(handleFileMiddleware(this.staticDir));
     app.use(handleIndexMiddleware());
