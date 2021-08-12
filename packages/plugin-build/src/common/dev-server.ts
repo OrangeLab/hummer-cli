@@ -48,7 +48,7 @@ export class DevServer extends EventEmitter {
 
   send(msg: any) {
     // @ts-ignore
-    this.proxyServer.pushMsgToTenons(msg)
+    this.proxyServer.pushMsgToNative(msg)
   }
 
   stop() {
