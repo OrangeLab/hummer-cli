@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.5.0](https://github.com.cnpmjs.org/OrangeLab/hummer-cli/compare/v0.4.0...v0.5.0) (2021-08-12)
+
+
+### Bug Fixes
+
+* 修复热加载push对象错误 ([#36](https://github.com.cnpmjs.org/OrangeLab/hummer-cli/issues/36)) ([752d699](https://github.com.cnpmjs.org/OrangeLab/hummer-cli/commit/752d6991592df4b5dfa6172576c2fe74cf4ae6a4))
+
+
+### Features
+
+* 修改plugin-build package.json ([be88d9c](https://github.com.cnpmjs.org/OrangeLab/hummer-cli/commit/be88d9c07ed079b80856f506141b9f1e1e05625a))
+* publish plugin-build 0.4.2 ([b670d56](https://github.com.cnpmjs.org/OrangeLab/hummer-cli/commit/b670d56962a515ac7a417443d606dd308fd37fa5))
+
+
+
+
+
 # [0.4.0](https://github.com.cnpmjs.org/OrangeLab/hummer-cli/compare/v0.3.1...v0.4.0) (2021-08-09)
 
 
