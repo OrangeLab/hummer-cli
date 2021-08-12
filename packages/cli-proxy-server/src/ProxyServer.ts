@@ -220,6 +220,12 @@ export class ProxyServer {
     )
   }
 
+  pushMsgToNative(message: any) {
+    if (this._nativeSocket) {
+      (this._nativeSocket as WebSocket).send(JSON.stringify(message))
+    }
+  }
+  
   _getCurActiveTenons() {
     return Array.from(this._tenons.entries()).map( 
       ([tenonId]) => ({ tenonId }) 
