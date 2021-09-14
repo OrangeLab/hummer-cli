@@ -1,5 +1,5 @@
 import { Core, Plugin } from '@hummer/cli-core';
-const {runInspectorProxy} = require('metro-inspector-proxy');
+import runInspectorProxy from './proxy/entry'
 import {info, error} from '@hummer/cli-utils';
 
 export class DebugPlugin extends Plugin {

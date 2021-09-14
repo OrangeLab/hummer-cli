@@ -7,6 +7,7 @@ export const getDebug = debugOrigin
 
 export * from './logger'
 export * from './config'
+export * from './levelLogger'
 
 export const inquirer = inquirerOrigin
 export const fse = fseOrigin
