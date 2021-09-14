@@ -81,8 +81,10 @@ export class InspectorProxy {
     } else {
       this._serverAddressWithPort = `localhost:${addressInfo.port}`;
     }
-    this._addDeviceConnectionHandler(server);
-    this._addDebuggerConnectionHandler(server);
+    return {
+      [WS_DEVICE_URL]: this._addDeviceConnectionHandler(server),
+      [WS_DEBUGGER_URL]: this._addDebuggerConnectionHandler(server),
+    };
   }
 
   // Converts page information received from device into PageDescription object
@@ -132,14 +134,13 @@ export class InspectorProxy {
   // new instance of Device class.
   _addDeviceConnectionHandler(server: Server) {
     const wss = new WS.Server({
-      server,
-      path: WS_DEVICE_URL,
+      noServer: true,
       perMessageDeflate: true,
     });
     // $FlowFixMe[value-as-type]
-    wss.on('connection', async (socket: WS) => {
+    wss.on('connection', async (socket: WS, req) => {
       try {
-        const query = url.parse(socket["upgradeReq"].url || '', true).query || {};
+        const query = url.parse(req.url || '', true).query || {};
         const deviceName = query.name as string || 'Unknown';
         const appName = query.app as string || 'Unknown';
         const deviceId = this._deviceCounter++;
@@ -155,10 +156,11 @@ export class InspectorProxy {
           LevelLogger.debug(`Device ${deviceName} disconnected.`);
         });
       } catch (e) {
-        console.error('error', e);
+        LevelLogger.error(e);
         socket.close(INTERNAL_ERROR_CODE, e);
       }
     });
+    return wss;
   }
 
   // Adds websocket handler for debugger connections.
@@ -168,14 +170,13 @@ export class InspectorProxy {
   // websocket object to corresponding Device instance.
   _addDebuggerConnectionHandler(server: Server) {
     const wss = new WS.Server({
-      server,
-      path: WS_DEBUGGER_URL,
+      noServer: true,
       perMessageDeflate: false,
     });
     // $FlowFixMe[value-as-type]
-    wss.on('connection', async (socket: WS) => {
+    wss.on('connection', async (socket: WS, req) => {
       try {
-        const query = url.parse(socket["upgradeReq"].url || '', true).query || {};
+        const query = url.parse(req.url || '', true).query || {};
         const deviceId = query.device as string;
         const pageId = query.page as string;
 
@@ -197,5 +198,6 @@ export class InspectorProxy {
         socket.close(INTERNAL_ERROR_CODE, e);
       }
     });
+    return wss;
   }
 }
