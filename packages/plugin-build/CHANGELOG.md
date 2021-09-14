@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.6.0](https://github.com.cnpmjs.org/OrangeLab/hummer-cli/compare/v0.5.0...v0.6.0) (2021-09-10)
+
+
+### Features
+
+* 修改文件列表接口以适配多层级文件夹 ([7d23e33](https://github.com.cnpmjs.org/OrangeLab/hummer-cli/commit/7d23e33faaee08c98419e45fb1be662d9113c650))
+
+
+
+
+
 # [0.5.0](https://github.com.cnpmjs.org/OrangeLab/hummer-cli/compare/v0.4.0...v0.5.0) (2021-08-12)
 
 

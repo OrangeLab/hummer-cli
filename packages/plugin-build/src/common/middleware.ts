@@ -1,18 +1,37 @@
 import * as fs from 'fs'
+import path from 'path'
 import { Context, Next } from 'koa'
+
+// 针对dist目录为多层级的情况，需要读取所有文件
+function readFileList(staticDir: string, filesList: string[] = []) {
+  const files = fs.readdirSync(staticDir);
+  files.forEach(item => {
+    var fullPath = path.join(staticDir, item);
+    const stat = fs.statSync(fullPath);
+    if (stat.isDirectory()) {
+      readFileList(path.join(staticDir, item), filesList);
+    } else {
+      filesList.push(fullPath);
+    }    
+  });
+  return filesList;
+}
 
 export function handleFileMiddleware(staticDir: string) {
   return (ctx: Context, next: Next) => {
     let { req } = ctx;
     if (req.url === '/fileList') {
-      let files = fs.readdirSync(staticDir);
-      files = files.filter((file) => {
-        return /\.js$/.test(file)
-      })
+      let fileList: string[] = [];
+      readFileList(staticDir, fileList);
+      fileList = fileList.filter((file) =>
+        /\.js$/.test(file)
+      ).map(file =>
+        file.split(`${staticDir}${path.sep}`)[1]
+      )
       ctx.body = {
         code: 0,
-        data: files
-      }
+        data: fileList
+      };
     } else {
       next();
     }

@@ -1,6 +1,6 @@
 {
   "name": "@hummer/cli-plugin-debug",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Hummer Plugin Debug",
   "homepage": "",
   "license": "ISC",
