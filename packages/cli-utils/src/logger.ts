@@ -10,6 +10,10 @@ export const log = (msg: string = '', tag?: string) => {
   tag ? console.log(format(chalkTag(tag), msg)) : console.log(msg)
 }
 
+export const debug = (msg: string = '', tag?: string) => {
+  console.debug(format(chalk.bgBlue.black(' DEBUG ') + (tag ? chalkTag(tag) : ''), msg))
+}
+
 export const info = (msg: string = '', tag?: string) => {
   console.log(format(chalk.bgBlue.black(' INFO ') + (tag ? chalkTag(tag) : ''), msg))
 }
@@ -131,6 +135,7 @@ export const logger = {
   log,
   info,
   warn,
+  debug,
   error,
   done,
   clearConsole,
