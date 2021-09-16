@@ -1,6 +1,6 @@
 import { Core, Plugin } from '@hummer/cli-core';
 import runInspectorProxy from './proxy/entry'
-import {info, error} from '@hummer/cli-utils';
+import { LevelLogger } from '@hummer/cli-utils';
 
 export class DebugPlugin extends Plugin {
 	name = 'debug'
@@ -23,9 +23,9 @@ export class DebugPlugin extends Plugin {
 		let root = process.cwd();
 		try{
 			runInspectorProxy(this.port, root)
-			info('Debug Service Has Started!')
+			LevelLogger.info('Debug Service Has Started!')
 		}catch(err){
-			error('8081端口被占用，请释放对应的端口')
+			LevelLogger.error('8081端口被占用，请释放对应的端口')
 		}
 	}
 }

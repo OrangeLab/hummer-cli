@@ -11,7 +11,7 @@ export const log = (msg: string = '', tag?: string) => {
 }
 
 export const debug = (msg: string = '', tag?: string) => {
-  console.debug(format(chalk.bgBlue.black(' DEBUG ') + (tag ? chalkTag(tag) : ''), msg))
+  console.debug(format(chalk.bgCyan.black(' DEBUG ') + (tag ? chalkTag(tag) : ''), msg))
 }
 
 export const info = (msg: string = '', tag?: string) => {
