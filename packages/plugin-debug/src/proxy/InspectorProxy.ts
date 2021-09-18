@@ -188,10 +188,10 @@ export class InspectorProxy {
         if (device == null) {
           throw new Error('Unknown device with ID ' + deviceId);
         }
-
+        LevelLogger.debug(`new debugger for ${pageId} connected`);          
         device.handleDebuggerConnection(socket, pageId);
         socket.on('close',()=>{
-          console.log('2')
+          LevelLogger.debug(`debugger for ${pageId} disconnected`);          
         })
       } catch (e) {
         console.error(e);

@@ -355,8 +355,10 @@ export class Device {
     );
     if (pathToSource) {
       try {
+        const fs_path = new URL(pathToSource);
+        const p = path.join(this._projectRoot,'dist',fs_path.pathname);
         scriptSource = fs.readFileSync(
-          path.resolve(this._projectRoot, pathToSource),
+          p,
           'utf8',
         );
       } catch (err) {
