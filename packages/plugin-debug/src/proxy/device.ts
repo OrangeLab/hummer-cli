@@ -353,11 +353,10 @@ export class Device {
     const pathToSource = this._scriptIdToSourcePathMapping.get(
       req.params.scriptId,
     );
-    this._projectRoot = '/Users/didi/demo/template-ts/dist';
     if (pathToSource) {
       try {
         const fs_path = new URL(pathToSource);
-        const p = path.join(this._projectRoot,fs_path.pathname);
+        const p = path.join(this._projectRoot,'dist',fs_path.pathname);
         scriptSource = fs.readFileSync(
           p,
           'utf8',

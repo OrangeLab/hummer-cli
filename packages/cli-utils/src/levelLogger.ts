@@ -1,36 +1,47 @@
 import { logger } from './logger'
 
 export enum LogLevel {
-    Verbose = 0,
-    Debug = 1,
-    Log = 2,
-    Info = 3,
-    Warning = 4,
-    Error = 5,
-    None = 6
+    None = 0,
+    Info = 1,
+    Debug = 2,
+    Warning = 3,
+    Error = 4,//无视 level，无条件log
+    Verbose = 5,
 }
 
 export class LogHelper {
 
     public static get logLevel(): LogLevel {
-        // todo parse cli options
-        return LogLevel.Debug;
+        if (process && process.env && process.env.npm_config_logLevel) {
+            // @ts-ignore
+            return LogLevel[process.env.npm_config_logLevel];
+        }
+        return LogLevel.Info;
     }
 }
 
 
 export class LevelLogger {
 
-    public static log(msg: string | Error, level = LogLevel.Log) {
-
+    private static log(msg: string | Error, level = LogLevel.Info) {
+        if (level === LogLevel.Error) {
+            // @ts-ignore
+            this.getLogFunc(level)(msg)
+            return 
+        }
         const levelConfig = LogHelper.logLevel;
         if (levelConfig == LogLevel.None) { return }
-        const func = this.getLogFunc(level)
-        if (levelConfig == LogLevel.Verbose || levelConfig == level){
-          // @ts-ignore
-          func(msg)
+
+        if (level <= levelConfig) {
+            // @ts-ignore
+            this.getLogFunc(level)(msg)
         }
     }
+
+    public static info(msg: string = '') {
+        this.log(msg, LogLevel.Info);
+    }
+
     public static verbose(msg: string = '') {
         this.log(msg, LogLevel.Verbose);
     }
@@ -43,14 +54,11 @@ export class LevelLogger {
     }
 
     public static error(msg: string | Error = '') {
-
         this.log(msg, LogLevel.Error);
     }
 
     private static getLogFunc(level: LogLevel) {
         switch (level) {
-            case LogLevel.Log:
-                return logger.log;
             case LogLevel.Info:
                 return logger.info;
             case LogLevel.Warning:
