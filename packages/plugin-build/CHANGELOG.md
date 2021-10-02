@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.7.2](https://github.com.cnpmjs.org/OrangeLab/hummer-cli/compare/v0.7.1...v0.7.2) (2021-10-02)
+
+
+### Bug Fixes
+
+* vue multiple source cause breakpoint  unbound ([#39](https://github.com.cnpmjs.org/OrangeLab/hummer-cli/issues/39)) ([72f672e](https://github.com.cnpmjs.org/OrangeLab/hummer-cli/commit/72f672ec399309b7f300935649e6d2eb8cc69157))
+
+
+
+
+
 # [0.7.0](https://github.com.cnpmjs.org/OrangeLab/hummer-cli/compare/v0.6.0...v0.7.0) (2021-09-16)
 
 **Note:** Version bump only for package @hummer/cli-plugin-build
