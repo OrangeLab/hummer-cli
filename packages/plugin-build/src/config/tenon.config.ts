@@ -1,11 +1,21 @@
-import { Configuration, SourceMapDevToolPlugin, DefinePlugin } from 'webpack'
+import { Configuration, DefinePlugin } from 'webpack'
 import { TenonStylePlugin } from '@hummer/tenon-style-loader'
 import { VueLoaderPlugin } from '@hummer/tenon-loader'
 import JsccPlugin from 'webpack-plugin-jscc'
 import { ProjectConfig } from '@hummer/cli-utils'
-import { getAssetsAddress } from '../utils/server'
 import * as path from 'path'
 import { BuildPlugin } from '..'
+import { VueFileMapper, VueHandling } from './vue/vueFileMapper'
+
+
+interface ModuleFilenameTemplateInfo {
+  identifier : string,
+  resource : string,
+  resourcePath : string,
+  allLoaders : Array<any>,
+  hash : number,
+  namespace : string,
+}
 
 export default function getDefaultTenonConfiguration(isProduction: boolean, hmConfig: ProjectConfig, context: BuildPlugin): Configuration {
   let plugins: any = []
@@ -17,23 +27,51 @@ export default function getDefaultTenonConfiguration(isProduction: boolean, hmCo
       plugins.push(new JsccPlugin(hmConfig.jscc))
     }
   }
-  if (!isProduction) {
-    //issue:27 Modify SourceMapUrl 
-    plugins.push(new SourceMapDevToolPlugin({
-      module: true,
-      columns: false,
-      filename: "[name].js.map",
-      append: '\n//# sourceMappingURL=' + getAssetsAddress() + '[url]'
-    }))
-  }
   let devToolConfig = needMap ? {
     devtool: isProduction ? 'hidden-source-map' : 'cheap-module-source-map',
-  }: null;
+  } : null;
+  
+  //fix https://github.com/OrangeLab/hummer-cli/issues/29
+  /**
+   * vue-loader 会生成: webpack://src/app.vue?hash 形式的 sourcemap
+   * 具体见：https://github.com/vuejs/vue/issues/11023
+   * 
+   * vscode 使用正则匹配，忽略 此类型的源文件
+   * 见：https://github.com/microsoft/vscode-js-debug/commit/2f3c93a08df0ceb09eda86251d0309d34bfb26ef
+   * 但尽在 debugger type = chrome 下生效。
+   * 
+   * 由于目前 hummer inpector proxy 服务没有实现 CDP Target 相关协议。https://chromedevtools.github.io/devtools-protocol/tot/Target/#method-attachToBrowserTarget
+   * 因此通过 cli 过滤此类型文件。
+   */
+  // 
+
   return {
     ...devToolConfig,
     mode: isProduction ? 'production' : 'development',
     output: {
-      publicPath: './'
+      publicPath: './',
+      devtoolFallbackModuleFilenameTemplate: (info:ModuleFilenameTemplateInfo) => {
+        // webpack devtool:source-map 默认 sources 生成规则：webpack://[namespace]/[resourcePath]?[hash]
+        var sourceName;
+        // 如果是 vue-loader source。重新分配路径
+        const vueLoadScheme = 'webpack:///conflict/';
+        const defaultScheme = '`webpack:///';
+        if(info.namespace && info.namespace.length>0){
+          sourceName = `${info.namespace}/${info.resourcePath}?${info.hash}`;
+        }else{
+          sourceName = `${info.resourcePath}?${info.hash}`;
+        }
+        switch (VueFileMapper.getVueHandling(sourceName)) {
+          case VueHandling.Omit:
+            return `${vueLoadScheme}${sourceName}`;
+          case VueHandling.Lookup:
+            //todo lookup file          
+            break;
+          default:
+          // fall through
+        }      
+        return `${defaultScheme}${sourceName}`;        
+      },
     },
     resolve: {
       alias: {
@@ -101,8 +139,8 @@ export default function getDefaultTenonConfiguration(isProduction: boolean, hmCo
         }
       },]
     },
-    plugins: [new TenonStylePlugin(), new VueLoaderPlugin(),new DefinePlugin({
-      "NODE_DEBUG_ENV": JSON.stringify(isProduction? false: true) // 控制是否注入 DevTool
+    plugins: [new TenonStylePlugin(), new VueLoaderPlugin(), new DefinePlugin({
+      "NODE_DEBUG_ENV": JSON.stringify(isProduction ? false : true) // 控制是否注入 DevTool
     }), ...plugins]
   }
 }
