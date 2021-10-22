@@ -6,7 +6,7 @@ export default function runInspectorProxy(port:number, devPort:number, projectRo
   const inspectorProxy = new InspectorProxy(projectRoot);
   inspectorProxy.devPort = devPort;
   const httpServer = http.createServer(inspectorProxy.processRequest.bind(inspectorProxy))
-  httpServer.listen(port, 'localhost', () => {
+  httpServer.listen(port, '', () => {
     const websocketEndpoints = inspectorProxy.addWebSocketListener(
       httpServer,
     );
