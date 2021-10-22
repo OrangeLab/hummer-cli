@@ -12,7 +12,7 @@ export class DebugPlugin extends Plugin {
 				description: 'debug project',
 				usage: 'hummer debug --[option]=[value]',
 				options: {
- 					// '--port': "debug server port",
+ 					'--devPort': "dev server port",
 				},
 				hooks: [this.debug.bind(this)]
 			}
@@ -20,12 +20,13 @@ export class DebugPlugin extends Plugin {
 	}
 
 	private debug(){
+		let devPort = this.options.devPort ? this.options.devPort : 8000;
 		let root = process.cwd();
 		try{
-			runInspectorProxy(this.port, root)
-			LevelLogger.info('Debug Service Has Started!')
+			runInspectorProxy(this.port, devPort, root);
+			LevelLogger.info('Debug Service Has Started!');
 		}catch(err){
-			LevelLogger.error('8081端口被占用，请释放对应的端口')
+			LevelLogger.error('8081端口被占用，请释放对应的端口');
 		}
 	}
 }

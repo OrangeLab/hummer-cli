@@ -5,20 +5,30 @@ import { AddressInfo } from 'net'
 import { JsonPagesListResponse, JsonVersionResponse, Page, PageDescription } from './types'
 import * as WS from 'ws'
 import { LevelLogger } from '@hummer/cli-utils/dist/levelLogger';
+import * as address from 'address';
+
+const needle = require('needle');
 
 const WS_DEVICE_URL = '/inspector/device';
 const WS_DEBUGGER_URL = '/inspector/debug';
 const PAGES_LIST_JSON_URL = '/json';
 const PAGES_LIST_JSON_URL_2 = '/json/list';
+const PAGES_DEV_LIST_JSON_URL = '/dev/page/list';
 const PAGES_LIST_JSON_VERSION_URL = '/json/version';
 
 const INTERNAL_ERROR_CODE = 1011;
 
+interface DebuggeeListResponse {
+    code: number,
+    data: Array<string>
+}
 
 /**
  * Main Inspector Proxy class that connects JavaScript VM inside Android/iOS apps and JS debugger.
  */
 export class InspectorProxy {
+  public devPort: number;
+
   // Root of the project used for relative to absolute source path conversion.
   _projectRoot: string;
 
@@ -70,6 +80,17 @@ export class InspectorProxy {
         Browser: 'Mobile JavaScript',
         'Protocol-Version': '1.1',
       });
+    } else if (request.url === PAGES_DEV_LIST_JSON_URL) {
+
+      const protocol = 'http';
+      const ip = address.ip();
+      Promise.race([this._getDevFileDelay(100), this._getDevFileList()]).then((res) => {
+        res.data = res.data.map((fileName)=>{
+          const url = `${protocol}://${ip}:${this.devPort}/${fileName}`;
+          return url;
+        })
+        this._sendJsonResponse(response, res);
+      });
     }
   }
 
@@ -115,7 +136,7 @@ export class InspectorProxy {
   // Just serializes object using JSON and sets required headers.
   _sendJsonResponse(
     response: ServerResponse,
-    object: JsonPagesListResponse | JsonVersionResponse,
+    object: JsonPagesListResponse | JsonVersionResponse | any,
   ) {
     const data = JSON.stringify(object, null, 2);
     response.writeHead(200, {
@@ -188,10 +209,10 @@ export class InspectorProxy {
         if (device == null) {
           throw new Error('Unknown device with ID ' + deviceId);
         }
-        LevelLogger.debug(`new debugger for ${pageId} connected`);          
+        LevelLogger.debug(`new debugger for ${pageId} connected`);
         device.handleDebuggerConnection(socket, pageId);
-        socket.on('close',()=>{
-          LevelLogger.debug(`debugger for ${pageId} disconnected`);          
+        socket.on('close', () => {
+          LevelLogger.debug(`debugger for ${pageId} disconnected`);
         })
       } catch (e) {
         console.error(e);
@@ -199,5 +220,29 @@ export class InspectorProxy {
       }
     });
     return wss;
+  }
+
+  _getDevFileList(): Promise<DebuggeeListResponse> {
+    const defaultResponse = {
+      code: 0,
+      data: new Array()
+    };
+
+    return new Promise((resolve) => {
+      needle('get', `http://localhost:${this.devPort}/fileList`, {}, { json: true })
+        .then((resp: any) => {
+          resolve(resp.body);
+
+        }).catch((e: any) => {
+          resolve(defaultResponse);
+        });
+    })
+  }
+  _getDevFileDelay(duration: number): Promise<DebuggeeListResponse> {
+    const defaultResponse = {
+      code: 0,
+      data: new Array()
+    };
+    return new Promise<any>(resolve => setTimeout(() => { resolve(defaultResponse) }, duration))
   }
 }

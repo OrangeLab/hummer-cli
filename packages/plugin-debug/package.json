@@ -25,7 +25,9 @@
   },
   "dependencies": {
     "@hummer/cli-core": "^0.7.0",
-    "@hummer/cli-utils": "^0.7.0"
+    "@hummer/cli-utils": "^0.7.0",
+    "address": "^1.1.2",
+    "needle": "^3.0.0"
   },
   "gitHead": "7bb45fd0ceeb5e1af81ad5b2e20b44d61da2150a",
   "devDependencies": {
