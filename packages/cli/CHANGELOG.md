@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.8.0](https://github.com.cnpmjs.org/OrangeLab/hummer-cli/compare/v0.7.4...v0.8.0) (2021-11-02)
+
+**Note:** Version bump only for package @hummer/cli
+
+
+
+
+
 ## [0.7.4](https://github.com.cnpmjs.org/OrangeLab/hummer-cli/compare/v0.7.3...v0.7.4) (2021-10-22)
 
 **Note:** Version bump only for package @hummer/cli
