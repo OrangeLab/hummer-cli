@@ -2,11 +2,12 @@ import * as http from 'http'
 import { InspectorProxy } from './InspectorProxy'
 const {parse} = require('url');
 
-export default function runInspectorProxy(port:number, devPort:number, projectRoot:string) {
-  const inspectorProxy = new InspectorProxy(projectRoot);
-  inspectorProxy.devPort = devPort;
+function runGlobalInspectorProxy(port:number) {
+  const inspectorProxy = new InspectorProxy();
   const httpServer = http.createServer(inspectorProxy.processRequest.bind(inspectorProxy))
+
   httpServer.listen(port, '', () => {
+    process.send("success");
     const websocketEndpoints = inspectorProxy.addWebSocketListener(
       httpServer,
     );
@@ -27,3 +28,6 @@ export default function runInspectorProxy(port:number, devPort:number, projectRo
     });
   });   
 }
+const port = process.argv[2];
+const root = process.cwd()
+runGlobalInspectorProxy(parseInt(port));

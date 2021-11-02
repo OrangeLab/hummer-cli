@@ -2,10 +2,11 @@ import { Device } from './device'
 import { IncomingMessage, Server, ServerResponse } from 'http'
 import * as url from 'url'
 import { AddressInfo } from 'net'
-import { JsonPagesListResponse, JsonVersionResponse, Page, PageDescription } from './types'
+import { DebugSeverDescription, JsonDebugServerListResponse, JsonPagesListResponse, JsonVersionResponse, Page, PageDescription } from './types'
 import * as WS from 'ws'
 import { LevelLogger } from '@hummer/cli-utils/dist/levelLogger';
 import * as address from 'address';
+import EventEmitter = require("events");
 
 const needle = require('needle');
 
@@ -14,20 +15,29 @@ const WS_DEBUGGER_URL = '/inspector/debug';
 const PAGES_LIST_JSON_URL = '/json';
 const PAGES_LIST_JSON_URL_2 = '/json/list';
 const PAGES_DEV_LIST_JSON_URL = '/dev/page/list';
+
+export const DEBUGSERVER_LIST_JSON_URL = '/debug/server/list';
+export const DEBUG_START_JSON_URL = '/debug/start';
+export const DEBUG_END_JSON_URL = '/debug/end';
+export const DEBUG_SERVER_CHECK_JSON_URL = '/debug/server/check';
+
+
 const PAGES_LIST_JSON_VERSION_URL = '/json/version';
 
 const INTERNAL_ERROR_CODE = 1011;
 
 interface DebuggeeListResponse {
-    code: number,
-    data: Array<string>
+  code: number,
+  data: Array<string>
 }
 
 /**
  * Main Inspector Proxy class that connects JavaScript VM inside Android/iOS apps and JS debugger.
  */
 export class InspectorProxy {
-  public devPort: number;
+
+  // Root of the project used for relative to absolute source path conversion.
+  _debugServerMap: Map<number, ChildDebugSever>;
 
   // Root of the project used for relative to absolute source path conversion.
   _projectRoot: string;
@@ -43,11 +53,10 @@ export class InspectorProxy {
   // by debugger to know where to connect.
   _serverAddressWithPort: string = '';
 
-  constructor(projectRoot: string) {
-    this._projectRoot = projectRoot;
+  constructor(projectRoot?: string) {
     this._devices = new Map();
+    this._debugServerMap = new Map();
   }
-
   // Process HTTP request sent to server. We only respond to 2 HTTP requests:
   // 1. /json/version returns Chrome debugger protocol version that we use
   // 2. /json and /json/list returns list of page descriptions (list of inspectable apps).
@@ -56,11 +65,14 @@ export class InspectorProxy {
     request: IncomingMessage,
     response: ServerResponse,
   ) {
+    
+    let parseUrl = url.parse(request.url, true);
     if (
-      request.url === PAGES_LIST_JSON_URL ||
-      request.url === PAGES_LIST_JSON_URL_2
+      parseUrl.pathname === PAGES_LIST_JSON_URL ||
+      parseUrl.pathname === PAGES_LIST_JSON_URL_2
     ) {
       // Build list of pages from all devices.
+      const devPort = (parseUrl.query ? parseUrl.query : {})["devPort"] as string;
       let result = new Array<PageDescription>();
       Array.from(this._devices.entries()).forEach(
         ([deviceId, device]) => {
@@ -69,7 +81,13 @@ export class InspectorProxy {
               .getPagesList()
               .map((page: Page) =>
                 this._buildPageDescription(deviceId, device, page),
-              ),
+              ).filter((pageDescription : PageDescription)=>{
+                let title = url.parse(pageDescription.title, false); 
+                if (devPort){
+                  return title.port === devPort;
+                }               
+                return true;
+              })
           );
         },
       );
@@ -80,16 +98,50 @@ export class InspectorProxy {
         Browser: 'Mobile JavaScript',
         'Protocol-Version': '1.1',
       });
-    } else if (request.url === PAGES_DEV_LIST_JSON_URL) {
+    } else if (parseUrl.pathname === PAGES_DEV_LIST_JSON_URL) {
 
       const protocol = 'http';
+      const devPort = (parseUrl.query ? parseUrl.query : {})["devPort"] as string;
       const ip = address.ip();
-      Promise.race([this._getDevFileDelay(100), this._getDevFileList()]).then((res) => {
-        res.data = res.data.map((fileName)=>{
-          const url = `${protocol}://${ip}:${this.devPort}/${fileName}`;
+      Promise.race([this._getDevFileDelay(100), this._getDevFileList(parseInt(devPort))]).then((res) => {
+        res.data = res.data.map((fileName) => {
+          const url = `${protocol}://${ip}:${devPort}/${fileName}`;
           return url;
         })
         this._sendJsonResponse(response, res);
+      });
+    } else if (request.url === DEBUGSERVER_LIST_JSON_URL) {
+
+      const debugList = new Array<DebugSeverDescription>();
+      this._debugServerMap.forEach((val, k) => {
+        debugList.push(val.entry);
+      })
+      this._sendJsonResponse(response, debugList);
+    } else if (request.url === DEBUG_START_JSON_URL || request.url === DEBUG_END_JSON_URL) {
+      let body = '';
+      request.on('data', chunk => {
+        body += chunk.toString();
+      });
+      request.on('end', () => {
+        const bodyData = JSON.parse(body);
+        if (bodyData.devPort) {
+          if (request.url === DEBUG_START_JSON_URL) {
+            let cds = new ChildDebugSever(bodyData as DebugSeverDescription);
+            this._debugServerMap.set(bodyData.devPort, cds);
+            cds.connectEvent.on("disconnected",()=>{
+              this._debugServerMap.delete(bodyData.devPort);
+              this._checkShouldTermniated();
+            })
+            cds.start()
+          } else {
+            let cds = this._debugServerMap.get(bodyData.devPort);
+            if (cds){
+              cds.end();
+              this._debugServerMap.delete(bodyData.devPort);
+            }
+          }
+        }
+        this._sendJsonResponse(response, {});
       });
     }
   }
@@ -136,7 +188,7 @@ export class InspectorProxy {
   // Just serializes object using JSON and sets required headers.
   _sendJsonResponse(
     response: ServerResponse,
-    object: JsonPagesListResponse | JsonVersionResponse | any,
+    object: JsonPagesListResponse | JsonVersionResponse | JsonDebugServerListResponse | any,
   ) {
     const data = JSON.stringify(object, null, 2);
     response.writeHead(200, {
@@ -167,7 +219,7 @@ export class InspectorProxy {
         const deviceId = this._deviceCounter++;
         this._devices.set(
           deviceId,
-          new Device(deviceId, deviceName, appName, socket, this._projectRoot),
+          new Device(deviceId, deviceName, appName, socket, this._debugServerMap),
         );
 
         LevelLogger.debug(`Got new connection: device=${deviceName}, app=${appName}`);
@@ -222,14 +274,14 @@ export class InspectorProxy {
     return wss;
   }
 
-  _getDevFileList(): Promise<DebuggeeListResponse> {
+  _getDevFileList(devPort:number): Promise<DebuggeeListResponse> {
     const defaultResponse = {
       code: 0,
       data: new Array()
     };
 
     return new Promise((resolve) => {
-      needle('get', `http://localhost:${this.devPort}/fileList`, {}, { json: true })
+      needle('get', `http://localhost:${devPort}/fileList`, {}, { json: true })
         .then((resp: any) => {
           resolve(resp.body);
 
@@ -244,5 +296,56 @@ export class InspectorProxy {
       data: new Array()
     };
     return new Promise<any>(resolve => setTimeout(() => { resolve(defaultResponse) }, duration))
+  }
+
+  _checkShouldTermniated(){
+    if (this._debugServerMap.size == 0) {
+      LevelLogger.info("Global Debug Service Has Started!");
+      process.exit();
+    }
+  }
+}
+
+export class ChildDebugSever {
+
+  public connectEvent = new EventEmitter();
+  private isStop : boolean = false;
+  constructor(public entry:DebugSeverDescription){}
+  public start() {
+
+    this._serverCheckLoop()
+  }
+
+  private async _serverCheckLoop() {
+
+    let promise = Promise.race([this._severCheckDelay(100), this._severCheck()])
+    let isAlive = await promise;    
+    if(isAlive && this.isStop == false) {
+      setTimeout(() => {
+        this._serverCheckLoop()
+      }, 2000);
+    }else{
+      this.connectEvent.emit("disconnected")
+    }
+  }
+
+  private _severCheck(): Promise<boolean> {
+    return new Promise<boolean>((resolve) => {
+      needle('get', `http://localhost:${this.entry.debugPort}${DEBUG_SERVER_CHECK_JSON_URL}`, {}, { json: true })
+        .then((resp: any) => {
+          resolve(true);
+
+        }).catch((e: any) => {
+          resolve(false);
+        });
+    })
+  }
+  private _severCheckDelay(duration: number): Promise<DebuggeeListResponse> {
+
+    return new Promise<any>(resolve => setTimeout(() => { resolve(false) }, duration))
+  }
+
+  public end() {
+    this.isStop = true;
   }
 }

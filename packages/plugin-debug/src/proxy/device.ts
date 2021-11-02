@@ -4,6 +4,7 @@ import * as path from 'path';
 import { DebuggerRequest, DebuggerResponse, GetScriptSourceRequest, GetScriptSourceResponse, MessageFromDevice, MessageToDevice, Page, SetBreakpointByUrlRequest } from './types';
 import * as WS from 'ws'
 import { LevelLogger } from '@hummer/cli-utils';
+import { ChildDebugSever } from './InspectorProxy';
 
 
 const PAGES_POLLING_INTERVAL = 1000;
@@ -65,21 +66,21 @@ export class Device {
   _scriptIdToSourcePathMapping: Map<string, string> = new Map();
 
   // Root of the project used for relative to absolute source path conversion.
-  _projectRoot: string;
+  _debugServerMap: Map<number, ChildDebugSever>;
 
   constructor(
     id: number,
     name: string,
     app: string,
     socket: WS,
-    projectRoot: string,
+    debugServerMap: Map<number, ChildDebugSever>,
   ) {
     this._id = id;
     this._name = name;
     this._app = app;
     this._pages = [];
     this._deviceSocket = socket;
-    this._projectRoot = projectRoot;
+    this._debugServerMap = debugServerMap;
 
     this._deviceSocket.on('message', (message: string) => {
       const parsedMessage = JSON.parse(message);
@@ -356,7 +357,8 @@ export class Device {
     if (pathToSource) {
       try {
         const fs_path = new URL(pathToSource);
-        const p = path.join(this._projectRoot,'dist',fs_path.pathname);
+        const port = fs_path.port;        
+        const p = path.join(this._getProjectRoot(parseInt(port)),'dist',fs_path.pathname);
         scriptSource = fs.readFileSync(
           p,
           'utf8',
@@ -410,5 +412,16 @@ export class Device {
       () => this._sendMessageToDevice({ event: 'getPages' }),
       PAGES_POLLING_INTERVAL,
     );
+  }
+
+  _getProjectRoot(port:number){
+
+    let pp = '';
+    this._debugServerMap.forEach((v,k)=>{
+      if(k === port){
+        pp = v.entry.workspaceFolder;
+      }
+    })
+    return pp;
   }
 }

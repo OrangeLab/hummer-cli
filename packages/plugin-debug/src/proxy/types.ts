@@ -58,8 +58,17 @@ export interface Page {
     webSocketDebuggerUrl: string,
     vm:string
   };
+
+
+  export interface DebugSeverDescription  {
+    devPort: number,
+    debugPort : number,
+    workspaceFolder : string
+  };
   export type JsonPagesListResponse = Array<PageDescription>;
   
+  export type JsonDebugServerListResponse = Array<DebugSeverDescription>;
+
   // Response to /json/version HTTP request from the debugger specifying browser type and
   // Chrome protocol version.
   export interface JsonVersionResponse  {
