@@ -7,13 +7,15 @@ export class Tenon {
   private name: String = '';
   private _tenonSocket: WebSocket
   private _emit: EventEmitter
+  public ip: String | undefined
   // private _pages:Array = []
 
-  constructor(id: Number, name: String, socket: WebSocket, emit: EventEmitter) {
+  constructor(id: Number, name: String, socket: WebSocket, emit: EventEmitter, ip:String | undefined) {
     this.id = id
     this.name = name || 'Unknown'
     this._tenonSocket = socket
     this._emit = emit
+    this.ip = ip
     // this._pages = [] // Tip: 页面管理
     this._addSocketHandler()
   }
