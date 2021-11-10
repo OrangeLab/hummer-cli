@@ -115,15 +115,15 @@ export class ProxyServer {
    // @ts-ignore
    _addTenonMsgListener(socket: WebSocket, request: IncomingMessage, nativeWss: WebSocket.Server) {
     try {
+      const ip = request.socket.remoteAddress;  // 获取远程ip 区分设备
       // 记录 native 端
       const tenonId = this._tenonCount++
       this._tenons.set(
         tenonId,
-        new Tenon(tenonId, '', socket, this._tenonEmit)
+        new Tenon(tenonId, '', socket, this._tenonEmit, ip)
       )
-
       // 新socket进来主动推给client
-      this._setPageList()
+      this._setPageList();
       this._setNotify({
         type: 'success',
         message: `Page-${tenonId}已连接`
@@ -188,6 +188,8 @@ export class ProxyServer {
       this._handlePageMethod(msg)
     } else if (msg.type == 'view') {
       this._handleViewMethod(msg)
+    } else if (msg.type == 'storage'){
+      this._handleStorageMethod(msg)
     } else {
       // Todo: 非协议类型字段 type
     }
@@ -202,6 +204,11 @@ export class ProxyServer {
       default:
         break;
     }
+  }
+  _handleStorageMethod(msg:any) {
+    const { tenonId } = msg.params
+    const tenon = this._tenons.get(tenonId)
+    tenon && tenon.sendMsgToTenon(msg)
   }
 
   // TODO:处理参数
@@ -228,7 +235,7 @@ export class ProxyServer {
   
   _getCurActiveTenons() {
     return Array.from(this._tenons.entries()).map( 
-      ([tenonId]) => ({ tenonId }) 
+      ([tenonId,tenonObj]) => ({ tenonId,ip:tenonObj?.ip }) 
     )
   }
 
@@ -256,7 +263,7 @@ export class ProxyServer {
       type: 'page',
       method: 'setPageList',
       params: {
-        pageList
+        pageList,
       }
     }
     this._pushMsgToClient(msg)
