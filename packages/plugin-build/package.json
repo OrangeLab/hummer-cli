@@ -33,6 +33,7 @@
     "@hummer/cli-core": "^0.2.0",
     "@hummer/cli-proxy-server": "^0.8.0",
     "@hummer/cli-utils": "^0.2.0",
+    "@hummer/devtool-inject-loader": "0.0.1-alpha.0",
     "@hummer/devtools-frontend": "^0.1.0-alpha.1",
     "@hummer/tenon-loader": "^1.0.5",
     "@hummer/tenon-style-loader": "^0.2.0",
@@ -44,6 +45,7 @@
     "core-js": "^3.8.0",
     "core-js-pure": "^3.8.0",
     "file-loader": "^6.2.0",
+    "fs-extra": "^10.0.0",
     "glob": "^7.1.6",
     "koa": "^2.13.0",
     "koa-html-render": "^1.0.3",
@@ -62,6 +64,7 @@
   },
   "devDependencies": {
     "@types/archiver": "^5.1.0",
+    "@types/fs-extra": "^9.0.13",
     "@types/koa": "^2.11.6",
     "@types/koa-static": "^4.0.1"
   },

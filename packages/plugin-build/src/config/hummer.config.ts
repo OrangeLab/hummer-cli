@@ -1,12 +1,14 @@
 import { Configuration, SourceMapDevToolPlugin } from 'webpack'
 import { getAssetsAddress } from '../utils/server'
 import { BuildPlugin } from '../index'
+import { pathExistsSync } from 'fs-extra'
+import path from 'path'
 
 
 export default function getDefaultHummerConfiguration(isProduction: boolean, context: BuildPlugin): Configuration {
   let plugins = []
+  let devToolLoaders = []
   let { map: needMap } = context.options
-
   if (!isProduction) {
     //issue:27 Modify SourceMapUrl 
     plugins.push(new SourceMapDevToolPlugin({
@@ -15,6 +17,18 @@ export default function getDefaultHummerConfiguration(isProduction: boolean, con
       filename: "[name].js.map",
       append: '\n//# sourceMappingURL=' + getAssetsAddress() + '[url]'
     }))
+    // 判断hummer项目中是否安装 tenon-devtool 
+    let projectPath = process.cwd()
+    let devToolInstalled = pathExistsSync(path.join(projectPath, 'node_modules', '@hummer', 'tenon-dev-tool'))
+    if (devToolInstalled) {
+      devToolLoaders.push({
+          loader: require.resolve('@hummer/devtool-inject-loader')
+      })
+    } else {
+      console.warn('[HummerCLI WARN] @hummer/tenon-dev-tool is not installed correctly')
+      console.warn('[HummerCLI WARN] View debug will not be turned on...')
+    }
+
   }
   let devToolConfig = needMap ? {
     devtool: isProduction ? 'hidden-source-map' : 'cheap-module-source-map',
@@ -38,7 +52,7 @@ export default function getDefaultHummerConfiguration(isProduction: boolean, con
         test: /\.(ts|js)$/i,
         // exclude: /node_modules/,
         exclude: /node_modules(?!\/@babel\/runtime)/,
-        use: {
+        use: [{
           loader: require.resolve('babel-loader'),
           options: {
             plugins: [
@@ -91,7 +105,7 @@ export default function getDefaultHummerConfiguration(isProduction: boolean, con
               }
             ]
           }
-        }
+        }, ...devToolLoaders]
       }, {
         test: /\.(png|jpg|jpeg|gif)$/i,
         use: [
