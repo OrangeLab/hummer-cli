@@ -56,8 +56,12 @@ export class BuildPlugin extends Plugin {
 
   private async dev() {
     // Dev 环境变量默认使用 development
+    const webConfig:any = {}
     if (!this.options.NODE_ENV) {
       this.options.NODE_ENV = "development"
+    }
+    if(this.options._.indexOf('web')>=1){
+      webConfig['openWeb'] = true
     }
     // Dev 环境变量默认打开 Map 开关
     if(!this.options.map){
@@ -65,7 +69,7 @@ export class BuildPlugin extends Plugin {
     }
     let config = await this.getWebpackConfig();
     let compiler = new Compiler();
-    compiler.initConfig(config);
+    compiler.initConfig(config,webConfig);
     compiler.dev();
   }
 

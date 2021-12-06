@@ -1,14 +1,17 @@
 import webpack from 'webpack'
 import { Stats } from 'webpack'
 import { DevServer } from './common/dev-server'
+import { WebServer } from './common/web-server'
 import { getServerConfig,  getHost} from './utils'
 import * as fs from 'fs'
 import { fse } from '@hummer/cli-utils'
 import path from 'path'
 export class Compiler {
   config: any
-  initConfig(config: any) {
+  webConfig: any
+  initConfig(config: any,webConfig?: any) {
     this.config = config
+    this.webConfig = webConfig
   }
 
   build() {
@@ -40,6 +43,9 @@ export class Compiler {
     this.buildWatch((stats: Stats) => {
       this.printStats(stats);
     })
+    if(this.webConfig?.openWeb){
+      new WebServer(host, port, rootDir);
+    }
   }
 
   buildWatch(callback: Function) {
