@@ -2,14 +2,14 @@ import webpack from 'webpack'
 import { Stats } from 'webpack'
 import { DevServer } from './common/dev-server'
 import { WebServer } from './common/web-server'
-import { getServerConfig,  getHost} from './utils'
+import { getServerConfig, getHost } from './utils'
 import * as fs from 'fs'
 import { fse } from '@hummer/cli-utils'
 import path from 'path'
 export class Compiler {
   config: any
   webConfig: any
-  initConfig(config: any,webConfig?: any) {
+  initConfig(config: any, webConfig?: any) {
     this.config = config
     this.webConfig = webConfig
   }
@@ -37,14 +37,14 @@ export class Compiler {
     // 默认 path.join(process.cwd(), 'dist')
     let rootDir = this.config?.output?.path ?? path.join(process.cwd(), 'dist');
     fse.ensureDirSync(rootDir);
-    let {port, host} = await getServerConfig();
-    var devServer = new DevServer(host, port, rootDir);
-    this.startWatchServer({ host, port, rootDir }, devServer);
-    this.buildWatch((stats: Stats) => {
-      this.printStats(stats);
-    })
-    if(this.webConfig?.openWeb === 'all'){
-      new WebServer(host, port, rootDir);
+    let { port, host } = await getServerConfig();
+    if (this.webConfig?.openWeb === 'all') {
+      var webServer = new WebServer(host, port, rootDir);
+      var devServer = new DevServer(host, port, rootDir, webServer);
+      this.startWatchServer({ host, port, rootDir }, devServer);
+      this.buildWatch((stats: Stats) => {
+        this.printStats(stats);
+      })
     }
   }
 

@@ -2,6 +2,7 @@ import * as http from 'http'
 import { EventEmitter } from 'events'
 import { Server } from 'http'
 import { getPort } from '../utils/server'
+import { readFileList } from './middleware'
 
 const template = require('art-template')
 const serveHandler = require('serve-handler')
@@ -15,7 +16,7 @@ const rootPath = path.join(__dirname, '../../node_modules/@hummer/hummer-front/'
 export class WebServer extends EventEmitter {
 
     private server!: Server
-    private WebServerPort: number = 5002
+    public WebServerPort: number = 5002
     constructor(public host: string, public port: number, public staticDir: string) {
         super()
         this.start()
@@ -26,14 +27,18 @@ export class WebServer extends EventEmitter {
         this.server = http.createServer()
         let injectJsNames: Array<any> = []
         await this.initServerConfig()
-        request(`http://${this.host}:${this.port}/fileList`, (err: any, res: any, body: any) => {
-            if (!err && res.statusCode == 200) {
-                injectJsNames = JSON.parse(body).data
-                injectJsNames.forEach((item, index) => {
-                    injectJsNames[index] = item.split('.js')[0]
-                });
-            }
+        let fileList: string[] = [];
+        readFileList(this.staticDir, fileList);
+        fileList = fileList.filter((file) =>
+            /\.js$/.test(file)
+        ).map(file =>
+            file.split(`${this.staticDir}${path.sep}`)[1]
+        )
+        injectJsNames = fileList
+        injectJsNames.forEach((item, index) => {
+            injectJsNames[index] = item.split('.js')[0]
         });
+
         this.server.on('request', async function (req, res) {
             await serveHandler(req, res, {
                 "public": path.join(rootPath, 'dist'),
