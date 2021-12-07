@@ -60,8 +60,16 @@ export class BuildPlugin extends Plugin {
     if (!this.options.NODE_ENV) {
       this.options.NODE_ENV = "development"
     }
-    if(this.options._.indexOf('web')>=1){
-      webConfig['openWeb'] = true
+    const env = process.env
+    const modeStr = env.npm_config_mode || env.npm_config_modes || ''
+    console.log(modeStr)
+    switch (modeStr) {
+      case 'webOnly':
+        webConfig['openWeb'] = 'webOnly'
+        break;
+      default:
+        webConfig['openWeb'] = 'all'
+        break;
     }
     // Dev 环境变量默认打开 Map 开关
     if(!this.options.map){

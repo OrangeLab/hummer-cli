@@ -1,6 +1,7 @@
 import * as http from 'http'
 import { EventEmitter } from 'events'
 import { Server } from 'http'
+import { getPort } from '../utils/server'
 
 const template = require('art-template')
 const serveHandler = require('serve-handler')
@@ -14,20 +15,20 @@ const rootPath = path.join(__dirname, '../../node_modules/@hummer/hummer-front/'
 export class WebServer extends EventEmitter {
 
     private server!: Server
-
+    private WebServerPort: number = 5002
     constructor(public host: string, public port: number, public staticDir: string) {
         super()
         this.start()
     }
 
-    start() {
+    async start() {
         const that = this
         this.server = http.createServer()
         let injectJsNames: Array<any> = []
+        await this.initServerConfig()
         request(`http://${this.host}:${this.port}/fileList`, (err: any, res: any, body: any) => {
             if (!err && res.statusCode == 200) {
                 injectJsNames = JSON.parse(body).data
-                console.log('fyq',injectJsNames)
                 injectJsNames.forEach((item, index) => {
                     injectJsNames[index] = item.split('.js')[0]
                 });
@@ -36,6 +37,10 @@ export class WebServer extends EventEmitter {
         this.server.on('request', async function (req, res) {
             await serveHandler(req, res, {
                 "public": path.join(rootPath, 'dist'),
+                "cleanUrls": false,
+                "directoryListing": [
+                    "/favicon.ico"
+                ]
             }, {
                 sendError() {
                     let defaultPathname
@@ -45,14 +50,13 @@ export class WebServer extends EventEmitter {
                     } else {
                         defaultPathname = `/${injectJsNames[0]}`
                     }
-                    const pathName = (urlObj.pathname === '/'||urlObj.pathname === '/favicon.ico') ? defaultPathname : urlObj.pathname
+                    const pathName = (urlObj.pathname === '/' || urlObj.pathname === '/favicon.ico') ? defaultPathname : urlObj.pathname
                     let newInjectJsUrls: Array<any> = []
                     newInjectJsUrls[0] = `http://${that.host}:${that.port}${pathName}.js`
-                    console.log('fyq',pathName);
                     const filePath = path.join(rootPath, 'dist/index.html')
                     const cssPath = `http://${req.headers.host}/index-browser.css`
                     const jsPath = `http://${req.headers.host}/index-browser.js`
-                    fs.readFile(filePath, function (err:any, data:any) {
+                    fs.readFile(filePath, function (err: any, data: any) {
                         if (err) {
                             console.log(err);
                         }
@@ -61,19 +65,21 @@ export class WebServer extends EventEmitter {
                             jsPath,
                             newInjectJsUrls
                         })
-                        console.log('fyq',htmlstr);
                         res.end(htmlstr)
                     })
                 }
             })
         })
 
-        this.server.listen({ port: 5002 }, () => {
-            console.warn(`Web http server listening , you can connect http server by http://${this.host}:5002/ ...`);
-            open(`http://${this.host}:5002/`)
+        this.server.listen({ port: this.WebServerPort }, () => {
+            console.warn(`HummerFront Web http server listening , you can connect http server by http://${this.host}:${this.WebServerPort}/ ...`);
+            // open(`http://${this.host}:${this.WebServerPort}/`)
         })
     }
-
+    async initServerConfig() {
+        let port = await getPort();
+        this.WebServerPort = port;
+    }
 
     stop() {
         this.server && this.server.close()

@@ -43,7 +43,7 @@ export class Compiler {
     this.buildWatch((stats: Stats) => {
       this.printStats(stats);
     })
-    if(this.webConfig?.openWeb){
+    if(this.webConfig?.openWeb === 'all'){
       new WebServer(host, port, rootDir);
     }
   }
