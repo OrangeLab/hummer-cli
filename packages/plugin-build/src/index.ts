@@ -62,7 +62,6 @@ export class BuildPlugin extends Plugin {
     }
     const env = process.env
     const modeStr = env.npm_config_mode || env.npm_config_modes || ''
-    console.log(modeStr)
     switch (modeStr) {
       case 'webOnly':
         webConfig['openWeb'] = 'webOnly'
