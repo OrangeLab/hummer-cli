@@ -65,12 +65,14 @@ export class WebServer extends EventEmitter {
                         if (err) {
                             console.log(err);
                         }
-                        let htmlstr = template.render(data.toString(), {
-                            cssPath,
-                            jsPath,
-                            newInjectJsUrls
-                        })
-                        res.end(htmlstr)
+                        if (data) {
+                            let htmlstr = template.render(data.toString(), {
+                                cssPath,
+                                jsPath,
+                                newInjectJsUrls
+                            })
+                            res.end(htmlstr)
+                        }
                     })
                 }
             })
