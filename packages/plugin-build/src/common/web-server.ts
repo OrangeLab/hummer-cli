@@ -1,4 +1,5 @@
 import * as http from 'http'
+// import Koa from 'koa'
 import { EventEmitter } from 'events'
 import { Server } from 'http'
 import { getPort } from '../utils/server'
@@ -7,11 +8,9 @@ import { readFileList } from './middleware'
 const template = require('art-template')
 const serveHandler = require('serve-handler')
 
-const open = require('open')
 const path = require('path')
 const fs = require('fs')
 const url = require('url')
-const request = require('request');
 const rootPath = path.join(__dirname, '../../node_modules/@hummer/hummer-front/')
 export class WebServer extends EventEmitter {
 
@@ -23,6 +22,7 @@ export class WebServer extends EventEmitter {
     }
 
     async start() {
+        // const app = new Koa()
         const that = this
         this.server = http.createServer()
         let injectJsNames: Array<any> = []
@@ -45,11 +45,22 @@ export class WebServer extends EventEmitter {
                 "cleanUrls": false,
                 "directoryListing": [
                     "/favicon.ico"
-                ]
+                ],
             }, {
                 sendError() {
                     let defaultPathname
                     const urlObj = url.parse(req.url, true)
+                    if (req.url && req.url.startsWith('/images')) {
+                        fs.readFile(`${that.staticDir}${req.url}`, function (err: any, data: any) {
+                            if (err) {
+                                console.log(err);
+                            }
+                            if (data) {
+                                res.end(data)
+                            }
+                        })
+                        return
+                    }
                     if (injectJsNames.indexOf('index') >= 0) {
                         defaultPathname = '/index'
                     } else {
@@ -77,7 +88,6 @@ export class WebServer extends EventEmitter {
                 }
             })
         })
-
         this.server.listen({ port: this.WebServerPort }, () => {
             console.warn(`HummerFront Web http server listening , you can connect http server by http://${this.host}:${this.WebServerPort}/ ...`);
             // open(`http://${this.host}:${this.WebServerPort}/`)
