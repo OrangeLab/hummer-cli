@@ -56,8 +56,19 @@ export class BuildPlugin extends Plugin {
 
   private async dev() {
     // Dev 环境变量默认使用 development
+    const webConfig:any = {}
     if (!this.options.NODE_ENV) {
       this.options.NODE_ENV = "development"
+    }
+    const env = process.env
+    const modeStr = env.npm_config_mode || env.npm_config_modes || ''
+    switch (modeStr) {
+      case 'webOnly':
+        webConfig['openWeb'] = 'webOnly'
+        break;
+      default:
+        webConfig['openWeb'] = 'all'
+        break;
     }
     // Dev 环境变量默认打开 Map 开关
     if(!this.options.map){
@@ -65,7 +76,7 @@ export class BuildPlugin extends Plugin {
     }
     let config = await this.getWebpackConfig();
     let compiler = new Compiler();
-    compiler.initConfig(config);
+    compiler.initConfig(config,webConfig);
     compiler.dev();
   }
 

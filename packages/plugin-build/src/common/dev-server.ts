@@ -4,7 +4,7 @@ import Koa from 'koa'
 import serve from 'koa-static'
 import { EventEmitter } from 'events'
 import { Server } from 'http'
-import { handleFileMiddleware, handleIndexMiddleware } from './middleware'
+import { handleFileMiddleware, handleIndexMiddleware, handleWebServerPortMiddleware } from './middleware'
 import { ProxyServer } from '@hummer/cli-proxy-server'
 
 const htmlRender = require("koa-html-render")
@@ -17,7 +17,7 @@ export class DevServer extends EventEmitter {
   private server!: Server
   private proxyServer!: ProxyServer
 
-  constructor(public host: string, public port: number, public staticDir: string) {
+  constructor(public host: string, public port: number, public staticDir: string,  public WebServer: any) {
     super()
     this.start()
   }
@@ -37,6 +37,7 @@ export class DevServer extends EventEmitter {
     app.use(htmlRender('preview'));
     app.use(handleFileMiddleware(this.staticDir));
     app.use(handleIndexMiddleware());
+    app.use(handleWebServerPortMiddleware(this.WebServer))
     
     this.proxyServer = new ProxyServer()
     this.server.listen({ port: this.port }, () => {

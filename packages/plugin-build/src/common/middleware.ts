@@ -3,7 +3,7 @@ import path from 'path'
 import { Context, Next } from 'koa'
 
 // 针对dist目录为多层级的情况，需要读取所有文件
-function readFileList(staticDir: string, filesList: string[] = []) {
+export function readFileList(staticDir: string, filesList: string[] = []) {
   const files = fs.readdirSync(staticDir);
   files.forEach(item => {
     var fullPath = path.join(staticDir, item);
@@ -44,6 +44,21 @@ export function handleIndexMiddleware() {
     if (req.url === '/' || req.url === '/index.html') {
       // TODO 替换精美的首页
       ctx.html("index.html")
+    } else {
+      next();
+    }
+  }
+}
+
+
+export function handleWebServerPortMiddleware(WebServer: any) {
+  return (ctx: Context, next: Next) => {
+    let { req } = ctx;
+    if (req.url === '/webServerPort') {
+      ctx.body = {
+        code: 0,
+        data: WebServer.WebServerPort
+      };
     } else {
       next();
     }
