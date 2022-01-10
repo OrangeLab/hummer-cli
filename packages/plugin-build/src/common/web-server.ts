@@ -75,7 +75,7 @@ export class WebServer extends EventEmitter {
                     const pathName = (urlObj.pathname === '/' || urlObj.pathname === '/favicon.ico') ? defaultPathname : urlObj.pathname
                     let newInjectJsUrls: Array<any> = []
                     newInjectJsUrls[0] = `http://${that.host}:${that.port}${pathName}.js`
-                    const filePath = path.join(rootPath, 'dist/index.html')
+                    const filePath = path.join(rootPath, 'index.html')
                     const cssPath = `http://${req.headers.host}/index-browser.css`
                     const jsPath = `http://${req.headers.host}/index-browser.js`
                     fs.readFile(filePath, function (err: any, data: any) {
