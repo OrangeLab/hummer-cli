@@ -11,7 +11,6 @@ const serveHandler = require('serve-handler')
 const path = require('path')
 const fs = require('fs')
 const url = require('url')
-const rootPath = path.join(__dirname, '../../node_modules/@hummer/hummer-front/')
 export class WebServer extends EventEmitter {
 
     private server!: Server
@@ -24,10 +23,17 @@ export class WebServer extends EventEmitter {
     async start() {
         // const app = new Koa()
         const that = this
-        this.server = http.createServer()
         let injectJsNames: Array<any> = []
-        await this.initServerConfig()
         let fileList: string[] = [];
+        let rootPath: string
+        this.server = http.createServer()
+        try {
+            fs.accessSync(path.join(__dirname, '../../node_modules/@hummer/hummer-front/dist'));
+            rootPath = path.join(__dirname, '../../node_modules/@hummer/hummer-front/dist')
+        } catch (err) {
+            rootPath = path.join(__dirname, '../../../hummer-front/dist')
+        }
+        await this.initServerConfig()
         readFileList(this.staticDir, fileList);
         fileList = fileList.filter((file) =>
             /\.js$/.test(file)
@@ -41,7 +47,7 @@ export class WebServer extends EventEmitter {
 
         this.server.on('request', async function (req, res) {
             await serveHandler(req, res, {
-                "public": path.join(rootPath, 'dist'),
+                "public": rootPath,
                 "cleanUrls": false,
                 "directoryListing": [
                     "/favicon.ico"
