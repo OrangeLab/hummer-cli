@@ -2,8 +2,9 @@ import { Configuration, SourceMapDevToolPlugin } from 'webpack'
 import { getAssetsAddress } from '../utils/server'
 import { BuildPlugin } from '../index'
 import { pathExistsSync } from 'fs-extra'
-import path from 'path'
 
+import path from 'path'
+const exec = require('child_process').execSync
 
 export default function getDefaultHummerConfiguration(isProduction: boolean, context: BuildPlugin): Configuration {
   let plugins = []
@@ -20,15 +21,12 @@ export default function getDefaultHummerConfiguration(isProduction: boolean, con
     // 判断hummer项目中是否安装 tenon-devtool 
     let projectPath = process.cwd()
     let devToolInstalled = pathExistsSync(path.join(projectPath, 'node_modules', '@hummer', 'tenon-dev-tool'))
-    if (devToolInstalled) {
-      devToolLoaders.push({
-          loader: require.resolve('@hummer/devtool-inject-loader')
-      })
-    } else {
-      console.warn('[HummerCLI WARN] @hummer/tenon-dev-tool is not installed correctly')
-      console.warn('[HummerCLI WARN] View debug will not be turned on...')
+    if (!devToolInstalled) {
+      exec('npm install @hummer/tenon-dev-tool --save')
     }
-
+    devToolLoaders.push({
+      loader: require.resolve('@hummer/devtool-inject-loader')
+    })
   }
   let devToolConfig = needMap ? {
     devtool: isProduction ? 'hidden-source-map' : 'cheap-module-source-map',
