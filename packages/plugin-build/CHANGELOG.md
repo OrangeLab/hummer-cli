@@ -3,6 +3,36 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.10.2](https://github.com.cnpmjs.org/OrangeLab/hummer-cli/compare/v0.10.1...v0.10.2) (2022-01-10)
+
+
+### Bug Fixes
+
+* web模拟器 路径错误 ([66fc316](https://github.com.cnpmjs.org/OrangeLab/hummer-cli/commit/66fc316944705cd34c5c02227b5bee5f53eb880c))
+
+
+
+
+
+## [0.10.1](https://github.com.cnpmjs.org/OrangeLab/hummer-cli/compare/v0.10.0...v0.10.1) (2022-01-10)
+
+**Note:** Version bump only for package @hummer/cli-plugin-build
+
+
+
+
+
+# [0.10.0](https://github.com.cnpmjs.org/OrangeLab/hummer-cli/compare/v0.9.0...v0.10.0) (2021-12-27)
+
+
+### Features
+
+* plugin build devtools-front 升级 ([e10653e](https://github.com.cnpmjs.org/OrangeLab/hummer-cli/commit/e10653ee58c5839c62bb005f417687ffa151d185))
+
+
+
+
+
 # [0.9.0](https://github.com.cnpmjs.org/OrangeLab/hummer-cli/compare/v0.8.0...v0.9.0) (2021-11-14)
 
 
