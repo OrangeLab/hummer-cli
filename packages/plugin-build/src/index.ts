@@ -1,7 +1,7 @@
 import { Core, Plugin } from '@hummer/cli-core'
 import { getProjectConfig, getLoggerWithTag, ora } from '@hummer/cli-utils'
 import { getDefaultConfig } from './utils'
-import { mergeConfig, getEntries } from './utils/webpack'
+import { mergeConfig, getEntries, getPlugins } from './utils/webpack'
 import { archive } from './utils/archive';
 import { Compiler } from './compiler'
 import { error } from '@hummer/cli-utils'
@@ -32,12 +32,23 @@ export class BuildPlugin extends Plugin {
 
   private async build() {
     // Build 环境变量默认使用 production
+    const webConfig: any = {}
     if (!this.options.NODE_ENV) {
       this.options.NODE_ENV = "production"
     }
-    let config = await this.getWebpackConfig();
+    const env = process.env
+    const modeStr = env.npm_config_mode || env.npm_config_modes || ''
+    switch (modeStr) {
+      case 'web':
+        webConfig['openWeb'] = 'web'
+        break;
+      default:
+        webConfig['openWeb'] = 'all'
+        break;
+    }
+    let config = await this.getWebpackConfig(webConfig);
     let compiler = new Compiler();
-    compiler.initConfig(config);
+    compiler.initConfig(config, webConfig);
     const spinner = ora('Building, please wait for a moment!\n')
     try {
       logger.info('✨ Start Build, please wait for a moment!')
@@ -56,31 +67,31 @@ export class BuildPlugin extends Plugin {
 
   private async dev() {
     // Dev 环境变量默认使用 development
-    const webConfig:any = {}
+    const webConfig: any = {}
     if (!this.options.NODE_ENV) {
       this.options.NODE_ENV = "development"
     }
     const env = process.env
     const modeStr = env.npm_config_mode || env.npm_config_modes || ''
     switch (modeStr) {
-      case 'webOnly':
-        webConfig['openWeb'] = 'webOnly'
+      case 'web':
+        webConfig['openWeb'] = 'web'
         break;
       default:
         webConfig['openWeb'] = 'all'
         break;
     }
     // Dev 环境变量默认打开 Map 开关
-    if(!this.options.map){
+    if (!this.options.map) {
       this.options.map = true
     }
     let config = await this.getWebpackConfig();
     let compiler = new Compiler();
-    compiler.initConfig(config,webConfig);
+    compiler.initConfig(config, webConfig);
     compiler.dev();
   }
 
-  private async getWebpackConfig(){
+  private async getWebpackConfig(webConfig?: any) {
     // 1. Read Project Config
     let isProduction = this.options.production || this.options.NODE_ENV === 'production';
     let projectConfig = await getProjectConfig(Webpack, this.options);
@@ -92,6 +103,10 @@ export class BuildPlugin extends Plugin {
     let defaultConfig = getDefaultConfig(isProduction, type as any, projectConfig, this)
     if (webpack) {
       if (webpack.entries) {
+        if (webConfig?.openWeb === 'web') {
+          let plugins = getPlugins(webpack?.plugins || [])
+          webpack.plugins = plugins
+        }
         let entry = getEntries(webpack.entries, type)
         webpack.entry = entry
         delete webpack.entries
