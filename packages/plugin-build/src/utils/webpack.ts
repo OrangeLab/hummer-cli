@@ -55,10 +55,7 @@ export function getPlugins(plugins: any,) {
         filename: 'index.html',
         hash: true,
         inject: false,
-        minify: {    //压缩HTML文件
-          removeComments: true,    //移除HTML中的注释
-          collapseWhitespace: true    //删除空白符与换行符
-        }
+        minify: true,
       })
     )
   }
