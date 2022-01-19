@@ -12,7 +12,7 @@ export function readFileList(staticDir: string, filesList: string[] = []) {
       readFileList(path.join(staticDir, item), filesList);
     } else {
       filesList.push(fullPath);
-    }    
+    }
   });
   return filesList;
 }
@@ -63,4 +63,17 @@ export function handleWebServerPortMiddleware(WebServer: any) {
       next();
     }
   }
+}
+
+export function getServerFileList(staticDir: string, serverLocation: string) {
+  let fileList: string[] = [];
+  readFileList(staticDir, fileList);
+  fileList = fileList.filter((file) =>
+    /\.js$/.test(file)
+  ).map(file => {
+    let newFile
+    newFile = `${serverLocation}${file.split(`${staticDir}${path.sep}`)[1]}`
+    return newFile
+  })
+  return fileList
 }

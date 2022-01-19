@@ -4,7 +4,7 @@ import Koa from 'koa'
 import serve from 'koa-static'
 import { EventEmitter } from 'events'
 import { Server } from 'http'
-import { handleFileMiddleware, handleIndexMiddleware, handleWebServerPortMiddleware } from './middleware'
+import { handleFileMiddleware, handleIndexMiddleware, handleWebServerPortMiddleware, getServerFileList } from './middleware'
 import { ProxyServer } from '@hummer/cli-proxy-server'
 
 const htmlRender = require("koa-html-render")
@@ -12,12 +12,13 @@ const htmlRender = require("koa-html-render")
 const open = require('open')
 const path = require('path');
 const fs = require('fs')
+const qrcode = require('qrcode-terminal')
 export class DevServer extends EventEmitter {
 
   private server!: Server
   private proxyServer!: ProxyServer
 
-  constructor(public host: string, public port: number, public staticDir: string,  public WebServer: any) {
+  constructor(public host: string, public port: number, public staticDir: string, public WebServer: any, public devTool: boolean) {
     super()
     this.start()
   }
@@ -38,12 +39,20 @@ export class DevServer extends EventEmitter {
     app.use(handleFileMiddleware(this.staticDir));
     app.use(handleIndexMiddleware());
     app.use(handleWebServerPortMiddleware(this.WebServer))
-    
+
     this.proxyServer = new ProxyServer()
     this.server.listen({ port: this.port }, () => {
       console.warn(`Web http server listening , you can connect http server by http://${this.host}:${this.port}/ ...`);
       this.proxyServer.addWebSocketListener(this.server)
-      open(`http://${this.host}:${this.port}/`)
+      if (this.devTool) {
+        open(`http://${this.host}:${this.port}/`)
+      } else {
+        let serverFileList = getServerFileList(this.staticDir,`http://${this.host}:${this.port}/`)
+        serverFileList.forEach((item)=>{
+          console.log(`${item}:`)
+          qrcode.generate(item, {small: true});
+        })
+      }
     })
   }
 

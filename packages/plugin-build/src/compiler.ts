@@ -3,24 +3,28 @@ import { Stats } from 'webpack'
 import { DevServer } from './common/dev-server'
 import { WebServer } from './common/web-server'
 import { getServerConfig, getHost } from './utils'
-import * as fs from 'fs'
+import { getServerFileList } from './common/middleware'
 import { fse } from '@hummer/cli-utils'
 import path from 'path'
+const watch = require("node-watch");
+const qrcode = require('qrcode-terminal')
 export class Compiler {
-  config: any
+  webpackConfig: any
   webConfig: any
-  initConfig(config: any, webConfig?: any) {
-    this.config = config
-    this.webConfig = webConfig
+  private devTool: any = true
+  initConfig(config: any) {
+    this.webpackConfig = config.webpackConfig
+    this.webConfig = config.webConfig
+    this.devTool = config.devTool
   }
 
   build() {
-    const rootDir = this.config?.output?.path ?? path.join(process.cwd(), 'dist');
+    const rootDir = this.webpackConfig?.output?.path ?? path.join(process.cwd(), 'dist');
     fse.removeSync(rootDir);
     return new Promise<void>((resolve, reject) => {
       // TODO build增加压缩
       webpack({
-        ...this.config,
+        ...this.webpackConfig,
         mode: 'production'
       }, (err: any, stats: any) => {
         if (err) {
@@ -35,12 +39,12 @@ export class Compiler {
   async dev() {
     // 启动 DevServer，其中包含http & websocket
     // 默认 path.join(process.cwd(), 'dist')
-    let rootDir = this.config?.output?.path ?? path.join(process.cwd(), 'dist');
+    let rootDir = this.webpackConfig?.output?.path ?? path.join(process.cwd(), 'dist');
     fse.ensureDirSync(rootDir);
     let { port, host } = await getServerConfig();
     if (this.webConfig?.openWeb === 'all') {
       var webServer = new WebServer(host, port, rootDir);
-      var devServer = new DevServer(host, port, rootDir, webServer);
+      var devServer = new DevServer(host, port, rootDir, webServer, this.devTool);
       this.startWatchServer({ host, port, rootDir }, devServer);
       this.buildWatch((stats: Stats) => {
         this.printStats(stats);
@@ -51,7 +55,7 @@ export class Compiler {
   buildWatch(callback: Function) {
     return new Promise<void>((resolve, reject) => {
       let compiler = webpack({
-        ...this.config,
+        ...this.webpackConfig,
         mode: 'development'
       });
       compiler.watch({}, (err, result) => {
@@ -88,12 +92,20 @@ export class Compiler {
     // console.log(output)
   }
 
-  startWatchServer({ port, rootDir }: any, devServer: any) {
-    fs.watch(rootDir, { recursive: true }, (_event, fileName) => {
+  startWatchServer({ host, port, rootDir }: any, devServer: any) {
+    let watcher = watch(rootDir, { recursive: true });
+    watcher.on("change", (_event: any, fileName: any) => {
       if (!/\.js$/.test(fileName)) {
         return
       }
-      // #issue 24 Web Socket Send Message Use New IP
+      if (!this.devTool) {
+        let serverFileList = getServerFileList(rootDir, `http://${host}:${port}/`)
+        serverFileList.forEach((item) => {
+          console.log(`${item}:`)
+          qrcode.generate(item, { small: true });
+        })
+      }
+      fileName = fileName.split('/')[fileName.split('/').length - 1]
       let message = {
         type: 'ReloadBundle',
         params: {
@@ -101,7 +113,7 @@ export class Compiler {
         }
       }
       devServer.send(message)
-    })
+    });
   }
 }
 
