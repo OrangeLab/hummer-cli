@@ -4,14 +4,14 @@ import { DevServer } from './common/dev-server'
 import { WebServer } from './common/web-server'
 import { getServerConfig, getHost } from './utils'
 import { getServerFileList } from './common/middleware'
-import { fse } from '@hummer/cli-utils'
+import { fse, IDevTool } from '@hummer/cli-utils'
 import path from 'path'
 const watch = require("node-watch");
 const qrcode = require('qrcode-terminal')
 export class Compiler {
   webpackConfig: any
   webConfig: any
-  private devTool: any = true
+  private devTool: IDevTool = { web: true, qrCode: false }
   initConfig(config: any) {
     this.webpackConfig = config.webpackConfig
     this.webConfig = config.webConfig
@@ -98,12 +98,16 @@ export class Compiler {
       if (!/\.js$/.test(fileName)) {
         return
       }
-      if (!this.devTool) {
+      if (!this.devTool.web) {
         let serverFileList = getServerFileList(rootDir, `http://${host}:${port}/`)
-        serverFileList.forEach((item) => {
-          console.log(`${item}:`)
-          qrcode.generate(item, { small: true });
-        })
+        if (this.devTool.qrCode) {
+          serverFileList.forEach((item) => {
+            console.log(`${item}:`)
+            qrcode.generate(item, { small: true });
+          })
+        }else{
+          console.log(serverFileList)
+        }
       }
       fileName = fileName.split('/')[fileName.split('/').length - 1]
       let message = {

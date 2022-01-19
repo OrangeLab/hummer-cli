@@ -1,5 +1,5 @@
 import { Core, Plugin } from '@hummer/cli-core'
-import { getProjectConfig, getLoggerWithTag, ora } from '@hummer/cli-utils'
+import { getProjectConfig, getLoggerWithTag, ora, IDevTool } from '@hummer/cli-utils'
 import { getDefaultConfig } from './utils'
 import { mergeConfig, getEntries, getPlugins } from './utils/webpack'
 import { archive } from './utils/archive';
@@ -10,7 +10,7 @@ const logger = getLoggerWithTag('hummer-build')
 export class BuildPlugin extends Plugin {
 
   name = 'build'
-  private devTool: any = true
+  private devTool: IDevTool = { web: true, qrCode: false } 
   constructor(core: Core, options: any, name?: string) {
     super(core, options, name)
     this.commands = {
@@ -46,7 +46,7 @@ export class BuildPlugin extends Plugin {
         webConfig['openWeb'] = 'all'
         break;
     }
-    let config:any = {};
+    let config: any = {};
     let webpackConfig = await this.getWebpackConfig();
     let compiler = new Compiler();
     config['webpackConfig'] = webpackConfig
@@ -63,7 +63,7 @@ export class BuildPlugin extends Plugin {
       }
       logger.info('✨ Build Success!')
       spinner.stop()
-    } catch (err) {
+    } catch (err:any) {
       logger.error(err.message)
       spinner.stop(err)
     }
@@ -89,7 +89,7 @@ export class BuildPlugin extends Plugin {
     if (!this.options.map) {
       this.options.map = true
     }
-    let config:any = {};
+    let config: any = {};
     let webpackConfig = await this.getWebpackConfig();
     let compiler = new Compiler();
     config['webpackConfig'] = webpackConfig
@@ -107,7 +107,7 @@ export class BuildPlugin extends Plugin {
       error('hm.config.js 文件不规范，请检查！')
       process.exit();
     }
-    let { type, webpack, devTool = true } = projectConfig
+    let { type, webpack, devTool = { web: true, qrCode: false } } = projectConfig
     this.devTool = devTool
     let defaultConfig = getDefaultConfig(isProduction, type as any, projectConfig, this)
     if (webpack) {
