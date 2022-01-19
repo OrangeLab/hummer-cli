@@ -47,7 +47,7 @@ export class BuildPlugin extends Plugin {
         break;
     }
     let config: any = {};
-    let webpackConfig = await this.getWebpackConfig();
+    let webpackConfig = await this.getWebpackConfig(webConfig);
     let compiler = new Compiler();
     config['webpackConfig'] = webpackConfig
     config['devTool'] = this.devTool
@@ -112,6 +112,7 @@ export class BuildPlugin extends Plugin {
     let defaultConfig = getDefaultConfig(isProduction, type as any, projectConfig, this)
     if (webpack) {
       if (webpack.entries) {
+        console.log('fyq',webConfig?.openWeb)
         if (webConfig?.openWeb === 'web') {
           let plugins = getPlugins(webpack?.plugins || [])
           webpack.plugins = plugins
