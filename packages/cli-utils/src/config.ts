@@ -7,9 +7,15 @@ export enum ProjectType {
   VUE = 'vue'
 }
 
+export interface IDevTool {
+  web?:boolean
+  qrCode?:boolean
+}
+
 export interface ProjectConfig {
   type: ProjectType,
   webpack: any,
+  devTool?: IDevTool,
   entries?: string,
   jscc?: any // TODO 配置标准化
 }

@@ -1,5 +1,5 @@
 import { Core, Plugin } from '@hummer/cli-core'
-import { getProjectConfig, getLoggerWithTag, ora } from '@hummer/cli-utils'
+import { getProjectConfig, getLoggerWithTag, ora, IDevTool } from '@hummer/cli-utils'
 import { getDefaultConfig } from './utils'
 import { mergeConfig, getEntries, getPlugins } from './utils/webpack'
 import { archive } from './utils/archive';
@@ -10,7 +10,7 @@ const logger = getLoggerWithTag('hummer-build')
 export class BuildPlugin extends Plugin {
 
   name = 'build'
-
+  private devTool: IDevTool = { web: true, qrCode: false } 
   constructor(core: Core, options: any, name?: string) {
     super(core, options, name)
     this.commands = {
@@ -46,9 +46,13 @@ export class BuildPlugin extends Plugin {
         webConfig['openWeb'] = 'all'
         break;
     }
-    let config = await this.getWebpackConfig(webConfig);
+    let config: any = {};
+    let webpackConfig = await this.getWebpackConfig(webConfig);
     let compiler = new Compiler();
-    compiler.initConfig(config, webConfig);
+    config['webpackConfig'] = webpackConfig
+    config['devTool'] = this.devTool
+    config['webConfig'] = webConfig
+    compiler.initConfig(config);
     const spinner = ora('Building, please wait for a moment!\n')
     try {
       logger.info('✨ Start Build, please wait for a moment!')
@@ -59,7 +63,7 @@ export class BuildPlugin extends Plugin {
       }
       logger.info('✨ Build Success!')
       spinner.stop()
-    } catch (err) {
+    } catch (err:any) {
       logger.error(err.message)
       spinner.stop(err)
     }
@@ -85,9 +89,13 @@ export class BuildPlugin extends Plugin {
     if (!this.options.map) {
       this.options.map = true
     }
-    let config = await this.getWebpackConfig();
+    let config: any = {};
+    let webpackConfig = await this.getWebpackConfig();
     let compiler = new Compiler();
-    compiler.initConfig(config, webConfig);
+    config['webpackConfig'] = webpackConfig
+    config['devTool'] = this.devTool
+    config['webConfig'] = webConfig
+    compiler.initConfig(config);
     compiler.dev();
   }
 
@@ -99,7 +107,8 @@ export class BuildPlugin extends Plugin {
       error('hm.config.js 文件不规范，请检查！')
       process.exit();
     }
-    let { type, webpack } = projectConfig
+    let { type, webpack, devTool = { web: true, qrCode: false } } = projectConfig
+    this.devTool = devTool
     let defaultConfig = getDefaultConfig(isProduction, type as any, projectConfig, this)
     if (webpack) {
       if (webpack.entries) {
