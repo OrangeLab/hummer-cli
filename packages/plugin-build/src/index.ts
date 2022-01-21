@@ -112,7 +112,6 @@ export class BuildPlugin extends Plugin {
     let defaultConfig = getDefaultConfig(isProduction, type as any, projectConfig, this)
     if (webpack) {
       if (webpack.entries) {
-        console.log('fyq',webConfig?.openWeb)
         if (webConfig?.openWeb === 'web') {
           let plugins = getPlugins(webpack?.plugins || [])
           webpack.plugins = plugins
