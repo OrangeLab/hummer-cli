@@ -96,10 +96,15 @@ export default function getTenonReactConfiguration(isProduction: boolean, hmConf
         }
       },]
     },
-    plugins: [new TenonStylePlugin({
-      packageName: '@hummer/tenon-react'
-    }),new DefinePlugin({
-      "NODE_DEBUG_ENV": JSON.stringify(isProduction? false: true)  // 控制是否注入 DevTool
-    }), ...plugins]
+    plugins: [
+      new TenonStylePlugin({
+        packageName: '@hummer/tenon-react'
+      }),
+      new DefinePlugin({
+        "NODE_DEBUG_ENV": JSON.stringify(isProduction? false: true),  // 控制是否注入 DevTool
+        "HUMMER_COMPILE_TYPE": JSON.stringify('TENON_REACT') // 注入编译类型
+      }),
+      ...plugins
+    ]
   }
 }

@@ -1,4 +1,4 @@
-import { Configuration, SourceMapDevToolPlugin } from 'webpack'
+import { Configuration, SourceMapDevToolPlugin, DefinePlugin } from 'webpack'
 import { getAssetsAddress } from '../utils/server'
 import { BuildPlugin } from '../index'
 import { pathExistsSync } from 'fs-extra'
@@ -117,6 +117,11 @@ export default function getDefaultHummerConfiguration(isProduction: boolean, con
         ],
       }]
     },
-    plugins: [...plugins]
+    plugins: [
+      new DefinePlugin({
+        "HUMMER_COMPILE_TYPE": JSON.stringify('HUMMER') // 注入编译类型
+      }),
+      ...plugins
+    ]
   }
 }
