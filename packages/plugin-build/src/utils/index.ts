@@ -22,7 +22,7 @@ export function getDefaultConfig(isProduction: boolean, type: ProjectType, hmCon
       config = getDefaultReactConfiguration(isProduction, hmConfig, context)
       break;
     case ProjectType.HUMMER:
-      config = getDefaultHummerConfiguration(isProduction, context)
+      config = getDefaultHummerConfiguration(isProduction, hmConfig, context)
       break;
     case ProjectType.LIBRARY:
       config = getDefaultLibraryConfiguration(isProduction, context)

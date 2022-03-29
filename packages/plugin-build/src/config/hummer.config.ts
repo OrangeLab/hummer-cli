@@ -1,15 +1,24 @@
 import { Configuration, SourceMapDevToolPlugin, DefinePlugin } from 'webpack'
 import { getAssetsAddress } from '../utils/server'
+import JsccPlugin from 'webpack-plugin-jscc'
+import { ProjectConfig } from '@hummer/cli-utils'
 import { BuildPlugin } from '../index'
 import { pathExistsSync } from 'fs-extra'
 
 import path from 'path'
 const exec = require('child_process').execSync
 
-export default function getDefaultHummerConfiguration(isProduction: boolean, context: BuildPlugin): Configuration {
+export default function getDefaultHummerConfiguration(isProduction: boolean, hmConfig: ProjectConfig, context: BuildPlugin): Configuration {
   let plugins = []
   let devToolLoaders = []
   let { map: needMap } = context.options
+  if (hmConfig) {
+    // TODO 自定义插件的配置，在这里进行拓展
+    // TODO Validate Jscc Config
+    if (hmConfig.jscc) {
+      plugins.push(new JsccPlugin(hmConfig.jscc))
+    }
+  }
   if (!isProduction) {
     //issue:27 Modify SourceMapUrl 
     plugins.push(new SourceMapDevToolPlugin({
