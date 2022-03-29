@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.11.0](https://github.91chi.fun//https://github.com/OrangeLab/hummer-cli/compare/v0.10.3...v0.11.0) (2022-03-29)
+
+
+### Features
+
+* 新增编译标识全局变量HUMMER_COMPILE_TYPE ([d136624](https://github.91chi.fun//https://github.com/OrangeLab/hummer-cli/commit/d1366244917d750753d200a4971680535f01fa6a))
+* hummer TS项目构建支持jscc ([e69d049](https://github.91chi.fun//https://github.com/OrangeLab/hummer-cli/commit/e69d0498078ca062821fb55a732e198c0cbdaea5))
+
+
+
+
+
 ## [0.10.3](https://github.com.cnpmjs.org/OrangeLab/hummer-cli/compare/v0.10.2...v0.10.3) (2022-01-17)
 
 **Note:** Version bump only for package @hummer/cli-plugin-build
