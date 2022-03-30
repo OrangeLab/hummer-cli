@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.12.1](https://github.91chi.fun//https://github.com/OrangeLab/hummer-cli/compare/v0.12.0...v0.12.1) (2022-03-30)
+
+
+### Bug Fixes
+
+* devtool-inject-loader版本配置bug ([4a767bf](https://github.91chi.fun//https://github.com/OrangeLab/hummer-cli/commit/4a767bf40562ee1462b61a8918c7311d29450b79))
+
+
+
+
+
 # [0.12.0](https://github.91chi.fun//https://github.com/OrangeLab/hummer-cli/compare/v0.11.0...v0.12.0) (2022-03-30)
 
 
