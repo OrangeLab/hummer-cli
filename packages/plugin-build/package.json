@@ -33,7 +33,7 @@
     "@hummer/cli-core": "^0.12.0",
     "@hummer/cli-proxy-server": "^0.12.0",
     "@hummer/cli-utils": "^0.12.0",
-    "@hummer/devtool-inject-loader": "^0.0.1",
+    "@hummer/devtool-inject-loader": "~0.0.2",
     "@hummer/devtools-frontend": "^0.2.0",
     "@hummer/hummer-front": "^1.0.6",
     "@hummer/tenon-loader": "^1.0.5",
