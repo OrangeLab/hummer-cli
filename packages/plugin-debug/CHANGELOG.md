@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.12.0](https://git.xiaojukeji.com/tenon/tenon-cli/compare/v0.11.0...v0.12.0) (2022-03-30)
+
+**Note:** Version bump only for package @hummer/cli-plugin-debug
+
+
+
+
+
 # [0.11.0](https://git.xiaojukeji.com/tenon/tenon-cli/compare/v0.10.3...v0.11.0) (2022-03-29)
 
 **Note:** Version bump only for package @hummer/cli-plugin-debug
