@@ -1,6 +1,6 @@
 {
   "name": "@hummer/cli-plugin-device",
-  "version": "0.12.0",
+  "version": "0.13.0",
   "description": "Hummer Plugin Device",
   "homepage": "",
   "license": "ISC",
@@ -24,8 +24,8 @@
     "prepublishOnly": "rm -rf dist && npm run build"
   },
   "dependencies": {
-    "@hummer/cli-core": "^0.12.0",
-    "@hummer/cli-utils": "^0.12.0",
+    "@hummer/cli-core": "^0.13.0",
+    "@hummer/cli-utils": "^0.13.0",
     "metro-inspector-proxy": "^0.64.0"
   },
   "gitHead": "7bb45fd0ceeb5e1af81ad5b2e20b44d61da2150a"

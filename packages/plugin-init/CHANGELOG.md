@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.13.0](https://github.91chi.fun//https://github.com/OrangeLab/hummer-cli/compare/v0.12.1...v0.13.0) (2022-10-17)
+
+
+### Features
+
+* 新增template-mvp配置 ([caecd01](https://github.91chi.fun//https://github.com/OrangeLab/hummer-cli/commit/caecd0115763413d939e34c4f591ac11c855411e))
+
+
+
+
+
 # [0.12.0](https://github.91chi.fun//https://github.com/OrangeLab/hummer-cli/compare/v0.11.0...v0.12.0) (2022-03-30)
 
 **Note:** Version bump only for package @hummer/cli-plugin-init
