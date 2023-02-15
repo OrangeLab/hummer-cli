@@ -85,7 +85,6 @@ export class BuildPlugin extends Plugin {
     let isProduction = this.options.production || this.options.NODE_ENV === 'production';
     let { type, webpack } = this.projectConfig as ProjectConfig
     let defaultConfig = getDefaultConfig(isProduction, type as any, this.projectConfig as ProjectConfig, this)
-    console.log(defaultConfig)
     if (webpack) {
       if (webpack.entries) {
         // web模拟器启动配置
