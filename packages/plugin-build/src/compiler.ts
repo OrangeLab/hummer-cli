@@ -42,8 +42,10 @@ export class Compiler {
     let rootDir = this.webpackConfig?.output?.path ?? path.join(process.cwd(), 'dist');
     fse.ensureDirSync(rootDir);
     let { port, host } = await getServerConfig();
+    // 优先使用项目配置中的端口
+    port = this.devTool.devServerPort || port;
     if (this.webConfig?.openWeb === 'all') {
-      var webServer = new WebServer(host, port, rootDir);
+      var webServer = new WebServer(host, port, rootDir, this.devTool);
       var devServer = new DevServer(host, port, rootDir, webServer, this.devTool);
       this.startWatchServer({ host, port, rootDir }, devServer);
       this.buildWatch((stats: Stats) => {

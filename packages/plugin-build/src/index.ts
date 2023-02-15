@@ -1,5 +1,5 @@
 import { Core, Plugin } from '@hummer/cli-core'
-import { getProjectConfig, getLoggerWithTag, ora, IDevTool } from '@hummer/cli-utils'
+import { getProjectConfig, getLoggerWithTag, ora, IDevTool, ProjectConfig } from '@hummer/cli-utils'
 import { getDefaultConfig } from './utils'
 import { mergeConfig, getEntries, getPlugins } from './utils/webpack'
 import { archive } from './utils/archive';
@@ -7,10 +7,19 @@ import { Compiler } from './compiler'
 import { error } from '@hummer/cli-utils'
 import Webpack from 'webpack'
 const logger = getLoggerWithTag('hummer-build')
+
+interface CompilerConfig {
+  webConfig?: any,
+  devTool?: IDevTool,
+  webpackConfig?: any
+}
 export class BuildPlugin extends Plugin {
 
   name = 'build'
-  private devTool: IDevTool = { web: true, qrCode: false } 
+  private projectConfig: ProjectConfig | undefined
+  private compilerConfig: CompilerConfig = {
+    webConfig: {}
+  }
   constructor(core: Core, options: any, name?: string) {
     super(core, options, name)
     this.commands = {
@@ -32,34 +41,21 @@ export class BuildPlugin extends Plugin {
 
   private async build() {
     // Build 环境变量默认使用 production
-    const webConfig: any = {}
     if (!this.options.NODE_ENV) {
       this.options.NODE_ENV = "production"
     }
-    const env = process.env
-    const modeStr = env.npm_config_mode || env.npm_config_modes || ''
-    switch (modeStr) {
-      case 'web':
-        webConfig['openWeb'] = 'web'
-        break;
-      default:
-        webConfig['openWeb'] = 'all'
-        break;
-    }
-    let config: any = {};
-    let webpackConfig = await this.getWebpackConfig(webConfig);
+    await this.generateConfig();
+    this.compilerConfig.webpackConfig = await this.getWebpackConfig(this.compilerConfig.webConfig);
+
     let compiler = new Compiler();
-    config['webpackConfig'] = webpackConfig
-    config['devTool'] = this.devTool
-    config['webConfig'] = webConfig
-    compiler.initConfig(config);
+    compiler.initConfig(this.compilerConfig);
     const spinner = ora('Building, please wait for a moment!\n')
     try {
       logger.info('✨ Start Build, please wait for a moment!')
       spinner.start()
       await compiler.build();
-      if (this.options.archive && config.output?.path) {
-        await archive(config.output?.path);
+      if (this.options.archive && this.compilerConfig.webpackConfig?.output?.path) {
+        await archive(this.compilerConfig.webpackConfig.output?.path);
       }
       logger.info('✨ Build Success!')
       spinner.stop()
@@ -71,47 +67,28 @@ export class BuildPlugin extends Plugin {
 
   private async dev() {
     // Dev 环境变量默认使用 development
-    const webConfig: any = {}
     if (!this.options.NODE_ENV) {
       this.options.NODE_ENV = "development"
-    }
-    const env = process.env
-    const modeStr = env.npm_config_mode || env.npm_config_modes || ''
-    switch (modeStr) {
-      case 'web':
-        webConfig['openWeb'] = 'web'
-        break;
-      default:
-        webConfig['openWeb'] = 'all'
-        break;
     }
     // Dev 环境变量默认打开 Map 开关
     if (!this.options.map) {
       this.options.map = true
     }
-    let config: any = {};
-    let webpackConfig = await this.getWebpackConfig();
+    await this.generateConfig();
+    this.compilerConfig.webpackConfig = await this.getWebpackConfig();
     let compiler = new Compiler();
-    config['webpackConfig'] = webpackConfig
-    config['devTool'] = this.devTool
-    config['webConfig'] = webConfig
-    compiler.initConfig(config);
+    compiler.initConfig(this.compilerConfig);
     compiler.dev();
   }
 
   private async getWebpackConfig(webConfig?: any) {
-    // 1. Read Project Config
     let isProduction = this.options.production || this.options.NODE_ENV === 'production';
-    let projectConfig = await getProjectConfig(Webpack, this.options);
-    if (!projectConfig) {
-      error('hm.config.js 文件不规范，请检查！')
-      process.exit();
-    }
-    let { type, webpack, devTool = { web: true, qrCode: false } } = projectConfig
-    this.devTool = devTool
-    let defaultConfig = getDefaultConfig(isProduction, type as any, projectConfig, this)
+    let { type, webpack } = this.projectConfig as ProjectConfig
+    let defaultConfig = getDefaultConfig(isProduction, type as any, this.projectConfig as ProjectConfig, this)
+    console.log(defaultConfig)
     if (webpack) {
       if (webpack.entries) {
+        // web模拟器启动配置
         if (webConfig?.openWeb === 'web') {
           let plugins = getPlugins(webpack?.plugins || [])
           webpack.plugins = plugins
@@ -124,6 +101,43 @@ export class BuildPlugin extends Plugin {
       return config
     } else {
       return defaultConfig
+    }
+  }
+
+  private async generateConfig() {
+    // 1. Read Project Config
+    this.projectConfig = await getProjectConfig(Webpack, this.options);
+    if (!this.projectConfig) {
+      error('hm.config.js 文件不规范，请检查！')
+      process.exit();
+    }
+    
+    this.compilerConfig.devTool = {
+      ...{ web: true, qrCode: false },
+      ...this.projectConfig.devTool
+    }
+
+    // 校验端口号
+    if (this.compilerConfig.devTool?.devServerPort) {
+      if (
+        (typeof this.compilerConfig.devTool.devServerPort !== 'number')
+        || this.compilerConfig.devTool.devServerPort < 0 
+        || this.compilerConfig.devTool.devServerPort > 65535
+      ) {
+        error('devServerPort值不规范')
+        process.exit();
+      }
+    }
+
+    const env = process.env
+    const modeStr = env.npm_config_mode || env.npm_config_modes || ''
+    switch (modeStr) {
+      case 'web':
+        this.compilerConfig.webConfig['openWeb'] = 'web'
+        break;
+      default:
+        this.compilerConfig.webConfig['openWeb'] = 'all'
+        break;
     }
   }
 }

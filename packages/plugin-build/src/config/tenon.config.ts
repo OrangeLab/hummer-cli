@@ -86,7 +86,10 @@ export default function getDefaultTenonConfiguration(isProduction: boolean, hmCo
       rules: [{
         test: /\.vue$/,
         use: {
-          loader: require.resolve('@hummer/tenon-loader')
+          loader: require.resolve('@hummer/tenon-loader'),
+          options: {
+            ...(hmConfig.buildOptions?.tenonLoaderOptions || {})
+          }
         }
       }, {
         test: /\.less$/,

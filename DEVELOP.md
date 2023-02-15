@@ -11,6 +11,19 @@ npm i
 // lerna bootstrap
 npm run bootsrap
 
+// 开发&调试
+npm run build:watch
+// vscode调试配置
+{
+  "runtimeExecutable": "path-to-node",
+  "type": "node",
+  "request": "launch",
+  "name": "HummerCli 调试专用",
+  "program": "path-to-hummer-cli-project/packages/cli/bin/hummer.js",
+  "args": ["dev"],
+  "cwd": "path-to-hummer-project"
+}
+
 // 构建
 npm run build
 

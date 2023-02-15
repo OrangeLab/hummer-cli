@@ -4,6 +4,7 @@ import { EventEmitter } from 'events'
 import { Server } from 'http'
 import { getPort } from '../utils/server'
 import { readFileList } from './middleware'
+import { IDevTool } from '@hummer/cli-utils'
 
 const template = require('art-template')
 const serveHandler = require('serve-handler')
@@ -15,7 +16,7 @@ export class WebServer extends EventEmitter {
 
     private server!: Server
     public WebServerPort: number = 5002
-    constructor(public host: string, public port: number, public staticDir: string) {
+    constructor(public host: string, public port: number, public staticDir: string, public devTool: IDevTool) {
         super()
         this.start()
     }
@@ -101,7 +102,7 @@ export class WebServer extends EventEmitter {
     }
     async initServerConfig() {
         let port = await getPort();
-        this.WebServerPort = port;
+        this.WebServerPort = this.devTool?.webServerPort || port;
     }
 
     stop() {

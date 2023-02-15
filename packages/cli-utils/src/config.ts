@@ -10,6 +10,8 @@ export enum ProjectType {
 export interface IDevTool {
   web?:boolean
   qrCode?:boolean
+  devServerPort?: number
+  webServerPort?: number
 }
 
 export interface ProjectConfig {
@@ -17,7 +19,8 @@ export interface ProjectConfig {
   webpack: any,
   devTool?: IDevTool,
   entries?: string,
-  jscc?: any // TODO 配置标准化
+  jscc?: any, // TODO 配置标准化
+  buildOptions?: any
 }
 
 /**
