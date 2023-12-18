@@ -1,6 +1,6 @@
 {
   "name": "@hummer/cli-plugin-debug",
-  "version": "0.13.1-alpha.1",
+  "version": "0.13.1",
   "description": "Hummer Plugin Debug",
   "homepage": "",
   "license": "ISC",
@@ -24,8 +24,8 @@
     "prepublishOnly": "rm -rf dist && npm run build"
   },
   "dependencies": {
-    "@hummer/cli-core": "^0.13.1-alpha.1",
-    "@hummer/cli-utils": "^0.13.1-alpha.1",
+    "@hummer/cli-core": "^0.13.1",
+    "@hummer/cli-utils": "^0.13.1",
     "address": "^1.1.2",
     "needle": "^3.0.0",
     "portfinder": "^1.0.28"
