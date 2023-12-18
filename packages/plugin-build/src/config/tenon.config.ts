@@ -116,7 +116,9 @@ export default function getDefaultTenonConfiguration(isProduction: boolean, hmCo
                 {
                   targets: {
                     "ios": "9"
-                  }
+                  },
+                  modules: false,
+                  shippedProposals: true
                 }
               ],
               [require.resolve('@babel/preset-typescript'), {
@@ -132,7 +134,8 @@ export default function getDefaultTenonConfiguration(isProduction: boolean, hmCo
                 // https://github.com/babel/babel/blob/090c364a90fe73d36a30707fc612ce037bdbbb24/packages/babel-plugin-transform-runtime/src/index.js#L35-L42
                 version: require('@babel/runtime/package.json').version,
               }]
-            ]
+            ],
+            sourceType: "unambiguous",
           }
         }
       }, {
