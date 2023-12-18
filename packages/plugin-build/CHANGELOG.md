@@ -11,6 +11,14 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
+## [0.13.1](https://github.com/OrangeLab/hummer-cli/compare/v0.13.1-alpha.1...v0.13.1) (2023-12-18)
+
+**Note:** Version bump only for package @hummer/cli-plugin-build
+
+
+
+
+
 ## [0.13.1-alpha.1](https://github.com/OrangeLab/hummer-cli/compare/v0.13.1...v0.13.1-alpha.1) (2023-12-18)
 
 **Note:** Version bump only for package @hummer/cli-plugin-build
