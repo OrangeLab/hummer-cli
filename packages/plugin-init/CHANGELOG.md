@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.14.0](https://github.com/OrangeLab/hummer-cli/compare/v0.13.1...v0.14.0) (2024-02-05)
+
+
+### Features
+
+* 切换初始化模板获取淘宝源仓库地址切换 ([4932992](https://github.com/OrangeLab/hummer-cli/commit/4932992d2a3b37f9a98be9242173f0b4de1fe1f2))
+
+
+
+
+
 ## [0.13.1](https://github.com/OrangeLab/hummer-cli/compare/v0.13.1-alpha.1...v0.13.1) (2023-12-18)
 
 **Note:** Version bump only for package @hummer/cli-plugin-init
