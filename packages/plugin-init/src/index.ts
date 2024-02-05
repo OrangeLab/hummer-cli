@@ -79,7 +79,7 @@ export class InitPlugin extends Plugin{
     let result = '{}'
     let templateName = `@hummer/cli-${answers.template}`
     try {
-      result = execSync(`npm view ${templateName} dist-tags --json --registry=https://registry.npm.taobao.org/`, {
+      result = execSync(`npm view ${templateName} dist-tags --json --registry=https://registry.npmmirror.com/`, {
         stdio: [null],
         timeout: 5000
       }).toString();
@@ -96,7 +96,7 @@ export class InitPlugin extends Plugin{
 
     if (!fse.pathExistsSync(templateDir)) {
       fse.ensureDirSync(templateDir)
-      execSync(`npm pack ${templateName}@${latestversion} --registry=https://registry.npm.taobao.org/`, {
+      execSync(`npm pack ${templateName}@${latestversion} --registry=https://registry.npmmirror.com/`, {
         cwd: templateDir,
         stdio: ['pipe', 'ignore'],
         timeout: 20000
