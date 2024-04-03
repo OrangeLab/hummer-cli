@@ -141,7 +141,10 @@ export default function getDefaultTenonConfiguration(isProduction: boolean, hmCo
       }, {
         test: /\.css$/,
         use: {
-          loader: path.join(require.resolve('@hummer/tenon-style-loader'))
+          loader: path.join(require.resolve('@hummer/tenon-style-loader')),
+          options: {
+            ...(hmConfig.buildOptions?.tenonStyleLoaderOptions || {})
+          }
         }
       },]
     },
