@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.15.0](https://github.com/OrangeLab/hummer-cli/compare/v0.14.0...v0.15.0) (2024-04-03)
+
+
+### Features
+
+* tenon-style-loader 支持传入外部配置 ([cb232f0](https://github.com/OrangeLab/hummer-cli/commit/cb232f00a4eac2a69b401d2b9ba17f392fe0f567))
+
+
+
+
+
 # [0.14.0](https://github.com/OrangeLab/hummer-cli/compare/v0.13.1...v0.14.0) (2024-02-05)
 
 
