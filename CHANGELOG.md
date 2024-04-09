@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.16.0](https://github.com/OrangeLab/hummer-cli/compare/v0.15.0...v0.16.0) (2024-04-09)
+
+
+### Features
+
+* tenon style plugin插件配置传入 ([0920ced](https://github.com/OrangeLab/hummer-cli/commit/0920cedda275f263a3c27bc566011a74e2115ca1))
+
+
+
+
+
 # [0.15.0](https://github.com/OrangeLab/hummer-cli/compare/v0.14.0...v0.15.0) (2024-04-03)
 
 
