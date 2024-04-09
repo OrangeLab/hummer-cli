@@ -12,7 +12,7 @@
     "bootstrap": "npm install && npx lerna bootstrap",
     "clean": "lerna clean --yes && rm -rf ./packages/**/package-lock.json",
     "clean:lock": "rm -rf ./package-lock.json && rm -rf ./packages/**/package-lock.json",
-    "prepub": "npm run build && npm run clean:lock && npx lerna publish --canary --conventional-commits && git push --tags",
+    "pub:pre": "npm run build && npm run clean:lock && npx lerna publish --canary --conventional-commits && git push --tags",
     "pub": "npm run build && npm run clean:lock && npx lerna publish --conventional-commits  && git push --tags"
   },
   "author": "",
