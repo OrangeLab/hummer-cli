@@ -149,7 +149,9 @@ export default function getDefaultTenonConfiguration(isProduction: boolean, hmCo
       },]
     },
     plugins: [
-      new TenonStylePlugin(),
+      new TenonStylePlugin({
+        ...(hmConfig.buildOptions?.tenonStyleLoaderOptions || {})
+      }),
       new VueLoaderPlugin(),
       new DefinePlugin({
         "NODE_DEBUG_ENV": JSON.stringify(isProduction ? false : true), // 控制是否注入 DevTool
