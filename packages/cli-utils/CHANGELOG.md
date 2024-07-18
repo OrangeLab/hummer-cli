@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.17.0](https://github.com/OrangeLab/hummer-cli/compare/v0.16.0...v0.17.0) (2024-07-18)
+
+
+### Features
+
+* 自定义terser-webpack-plugin配置 避免build产物出现额外注释产物; ([8f809f8](https://github.com/OrangeLab/hummer-cli/commit/8f809f823539a840b93e900c655a9c6c1b680c1f))
+
+
+
+
+
 # [0.16.0](https://github.com/OrangeLab/hummer-cli/compare/v0.15.0...v0.16.0) (2024-04-09)
 
 **Note:** Version bump only for package @hummer/cli-utils

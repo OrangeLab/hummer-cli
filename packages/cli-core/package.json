@@ -1,6 +1,6 @@
 {
   "name": "@hummer/cli-core",
-  "version": "0.16.0",
+  "version": "0.17.0",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -22,7 +22,7 @@
   "author": "段丽康",
   "license": "ISC",
   "dependencies": {
-    "@hummer/cli-utils": "^0.16.0",
+    "@hummer/cli-utils": "^0.17.0",
     "minimist": "^1.2.5"
   },
   "gitHead": "63cabf9c710bcaa3af27c7b851e3c39db11f55e3"
