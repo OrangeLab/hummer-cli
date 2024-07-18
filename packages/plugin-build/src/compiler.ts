@@ -11,16 +11,29 @@ const qrcode = require('qrcode-terminal')
 export class Compiler {
   webpackConfig: any
   webConfig: any
-  private devTool: IDevTool = { web: true, qrCode: false }
+  buildOptions: any
+  private devTool: IDevTool = {}
   initConfig(config: any) {
     this.webpackConfig = config.webpackConfig
     this.webConfig = config.webConfig
-    this.devTool = config.devTool
+    this.devTool = {
+      web: true,
+      qrCode: false,
+      enableServer: true,
+      ...(config.devTool || {})
+    }
+    this.buildOptions = {
+      cleanDist: true,
+      ...(config.buildOptions || {})
+    }
   }
 
   build() {
     const rootDir = this.webpackConfig?.output?.path ?? path.join(process.cwd(), 'dist');
-    fse.removeSync(rootDir);
+    // build默认移除dist目录逻辑
+    if (this.buildOptions.cleanDist) {
+      fse.removeSync(rootDir);
+    }
     return new Promise<void>((resolve, reject) => {
       // TODO build增加压缩
       webpack({
@@ -44,10 +57,16 @@ export class Compiler {
     let { port, host } = await getServerConfig();
     // 优先使用项目配置中的端口
     port = this.devTool.devServerPort || port;
+    // TODO: openWeb确定openWeb配置 作用
     if (this.webConfig?.openWeb === 'all') {
-      var webServer = new WebServer(host, port, rootDir, this.devTool);
-      var devServer = new DevServer(host, port, rootDir, webServer, this.devTool);
-      this.startWatchServer({ host, port, rootDir }, devServer);
+      if (this.devTool?.enableServer) {
+        // web模拟器 服务
+        var webServer = new WebServer(host, port, rootDir, this.devTool);
+        // 调试服务
+        var devServer = new DevServer(host, port, rootDir, webServer, this.devTool);
+        this.startWatchServer({ host, port, rootDir }, devServer);
+      }
+
       this.buildWatch((stats: Stats) => {
         this.printStats(stats);
       })
@@ -83,15 +102,6 @@ export class Compiler {
         entrypoints: false
       }) + '\n\n'
     )
-    // let output =  stats?.toString({
-    //   colors: true,
-    //   modules: false,
-    //   children: false,
-    //   chunks: false,
-    //   chunkModules: false,
-    //   entrypoints: false
-    // })
-    // console.log(output)
   }
 
   startWatchServer({ host, port, rootDir }: any, devServer: any) {

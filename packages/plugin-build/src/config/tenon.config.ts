@@ -6,6 +6,7 @@ import { ProjectConfig } from '@hummer/cli-utils'
 import * as path from 'path'
 import { BuildPlugin } from '..'
 import { VueFileMapper, VueHandling } from './vue/vueFileMapper'
+import TerserPlugin from 'terser-webpack-plugin'
 
 
 interface ModuleFilenameTemplateInfo {
@@ -158,6 +159,14 @@ export default function getDefaultTenonConfiguration(isProduction: boolean, hmCo
         "HUMMER_COMPILE_TYPE": JSON.stringify('TENON_VUE') // 注入编译类型
       }),
       ...plugins
-    ]
+    ],
+    optimization: {
+      minimize: isProduction,
+      minimizer: [
+        new TerserPlugin({
+          extractComments: false,//不将注释提取到单独的文件中
+        }),
+      ],
+    }
   }
 }

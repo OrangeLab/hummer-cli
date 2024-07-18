@@ -5,6 +5,7 @@ import {ProjectConfig} from '@hummer/cli-utils'
 import {getAssetsAddress} from '../utils/server'
 import * as path from 'path'
 import { BuildPlugin } from '..'
+import TerserPlugin from 'terser-webpack-plugin'
 
 export default function getTenonReactConfiguration(isProduction: boolean, hmConfig:ProjectConfig, context: BuildPlugin): Configuration {
   let plugins:any = []
@@ -105,6 +106,14 @@ export default function getTenonReactConfiguration(isProduction: boolean, hmConf
         "HUMMER_COMPILE_TYPE": JSON.stringify('TENON_REACT') // 注入编译类型
       }),
       ...plugins
-    ]
+    ],
+    optimization: {
+      minimize: isProduction,
+      minimizer: [
+        new TerserPlugin({
+          extractComments: false,//不将注释提取到单独的文件中
+        }),
+      ],
+    }
   }
 }

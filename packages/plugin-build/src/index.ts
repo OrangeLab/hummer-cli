@@ -107,7 +107,7 @@ export class BuildPlugin extends Plugin {
     // 1. Read Project Config
     this.projectConfig = await getProjectConfig(Webpack, this.options);
     if (!this.projectConfig) {
-      error('hm.config.js 文件不规范，请检查！')
+      error('hm.config.js 文件不规范或当前执行路径下不存在hummer配置文件，请检查！')
       process.exit();
     }
     

@@ -4,6 +4,7 @@ import JsccPlugin from 'webpack-plugin-jscc'
 import { ProjectConfig } from '@hummer/cli-utils'
 import { BuildPlugin } from '../index'
 import { pathExistsSync } from 'fs-extra'
+import TerserPlugin from 'terser-webpack-plugin'
 
 import path from 'path'
 const exec = require('child_process').execSync
@@ -131,6 +132,14 @@ export default function getDefaultHummerConfiguration(isProduction: boolean, hmC
         "HUMMER_COMPILE_TYPE": JSON.stringify('HUMMER') // 注入编译类型
       }),
       ...plugins
-    ]
+    ],
+    optimization: {
+      minimize: isProduction,
+      minimizer: [
+        new TerserPlugin({
+          extractComments: false,//不将注释提取到单独的文件中
+        }),
+      ],
+    }
   }
 }

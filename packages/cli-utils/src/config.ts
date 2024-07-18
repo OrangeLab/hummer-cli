@@ -8,10 +8,11 @@ export enum ProjectType {
 }
 
 export interface IDevTool {
-  web?:boolean
+  web?:boolean  // 是否打开预览网页
   qrCode?:boolean
   devServerPort?: number
   webServerPort?: number
+  enableServer?: boolean // 是否开启调试服务（webserver devserver）
 }
 
 export interface ProjectConfig {
