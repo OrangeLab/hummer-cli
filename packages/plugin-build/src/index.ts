@@ -11,7 +11,8 @@ const logger = getLoggerWithTag('hummer-build')
 interface CompilerConfig {
   webConfig?: any,
   devTool?: IDevTool,
-  webpackConfig?: any
+  webpackConfig?: any,
+  buildOptions?: any
 }
 export class BuildPlugin extends Plugin {
 
@@ -114,6 +115,10 @@ export class BuildPlugin extends Plugin {
     this.compilerConfig.devTool = {
       ...{ web: true, qrCode: false },
       ...this.projectConfig.devTool
+    }
+
+    this.compilerConfig.buildOptions = {
+      ...this.projectConfig.buildOptions
     }
 
     // 校验端口号
