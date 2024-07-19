@@ -1,6 +1,6 @@
 {
   "name": "@hummer/cli",
-  "version": "0.17.0",
+  "version": "0.17.1",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -27,7 +27,7 @@
   "license": "ISC",
   "dependencies": {
     "@hummer/cli-core": "^0.17.0",
-    "@hummer/cli-plugin-build": "^0.17.0",
+    "@hummer/cli-plugin-build": "^0.17.1",
     "@hummer/cli-plugin-debug": "^0.17.0",
     "@hummer/cli-plugin-device": "^0.17.0",
     "@hummer/cli-plugin-init": "^0.17.0",

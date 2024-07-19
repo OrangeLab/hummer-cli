@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.17.1](https://github.com/OrangeLab/hummer-cli/compare/v0.17.0...v0.17.1) (2024-07-19)
+
+
+### Bug Fixes
+
+* 修复compilerConfig未获取到buildOptions的bug ([0169b2a](https://github.com/OrangeLab/hummer-cli/commit/0169b2a5a88ca687dcae27080243b5a412770462))
+
+
+
+
+
 # [0.17.0](https://github.com/OrangeLab/hummer-cli/compare/v0.16.0...v0.17.0) (2024-07-18)
 
 
