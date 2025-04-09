@@ -111,7 +111,8 @@ export default function getDefaultHummerConfiguration(isProduction: boolean, hmC
                   require.resolve('@babel/preset-typescript')
                 ]
               }
-            ]
+            ],
+            ...(hmConfig.buildOptions?.babelOptions || {})
           }
         }, ...devToolLoaders]
       }, {

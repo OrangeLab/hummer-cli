@@ -137,6 +137,7 @@ export default function getDefaultTenonConfiguration(isProduction: boolean, hmCo
               }]
             ],
             sourceType: "unambiguous",
+            ...(hmConfig.buildOptions?.babelOptions || {})
           }
         }
       }, {
