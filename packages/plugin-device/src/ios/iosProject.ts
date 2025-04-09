@@ -90,7 +90,7 @@ export class IosProject extends NativeProject {
     if (result.status === 0) {
       info('Successfully launched the app on the simulator');
     } else {
-      error('Failed to launch the app on simulator', result.stderr);
+      error('Failed to launch the app on simulator', result.stderr as unknown as string);
     }
   }
 

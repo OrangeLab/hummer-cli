@@ -107,7 +107,7 @@ export class ProxyServer {
       socket.on('close', () => {
         this._nativeSocket = undefined
       })
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
       socket.close(INTERNAL_ERROR_CODE, error);
     }
@@ -138,7 +138,7 @@ export class ProxyServer {
           message: `Page-${tenonId}已断开连接`
         })
       })
-    } catch (error) {
+    } catch (error: any) {
       console.error('error', error);
       socket.close(INTERNAL_ERROR_CODE, error);
     }
@@ -159,7 +159,7 @@ export class ProxyServer {
       socket.on('close', () => {
         this._clientSocket = undefined
       })
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
       socket.close(INTERNAL_ERROR_CODE, error);
     }
