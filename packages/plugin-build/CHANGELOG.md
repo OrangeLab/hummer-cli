@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.18.0](https://github.com/OrangeLab/hummer-cli/compare/v0.17.2...v0.18.0) (2025-04-09)
+
+
+### Features
+
+* hummer和tenon构建支持传入babelOptions ([65174d6](https://github.com/OrangeLab/hummer-cli/commit/65174d6532680d3b6c7af440565f7f4ad4b192af))
+
+
+
+
+
 ## [0.17.2](https://github.com/OrangeLab/hummer-cli/compare/v0.17.1...v0.17.2) (2025-03-13)
 
 **Note:** Version bump only for package @hummer/cli-plugin-build
